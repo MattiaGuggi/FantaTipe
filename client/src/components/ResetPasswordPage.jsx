@@ -14,6 +14,7 @@ const ResetPasswordPage = () => {
 	const params = new URLSearchParams(search);
 	const token = params.get('token');
 	const email = params.get('email');
+	const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -24,7 +25,7 @@ const ResetPasswordPage = () => {
 		}
         console.log('Token passed to reset password: ', token);
 		try {
-            const response = await fetch(`http://localhost:8080/auth/reset-password/${token}`, {
+            const response = await fetch(`${API_URL}/auth/reset-password/${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

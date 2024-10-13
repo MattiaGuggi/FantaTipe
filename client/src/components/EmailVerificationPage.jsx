@@ -11,7 +11,7 @@ const EmailVerificationPage = ({ onSignup }) => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const userEmail = location.state?.email || 'default@gmail.com';
-	const API_URL = import.meta.env.NODE_ENV === 'production' ? 'https://fantatipe-1-0.onrender.com' : 'http://localhost:8080';
+	const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
 	const handleChange = (index, value) => {
 		const newCode = [...code];

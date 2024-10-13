@@ -13,11 +13,12 @@ const Login = ({ onLogin }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const { setUser } = useUser();
   const navigate = useNavigate();
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/login', { email, password });
+      const response = await axios.post(`${API_URL}/login`, { email, password });
 
       if (response.data.success) {
         const { email, username, points, password, pfp } = response.data.user;

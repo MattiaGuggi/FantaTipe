@@ -9,6 +9,7 @@ const Profile = ({ redirectToLogin }) => {
   const { user, setUser } = useUser(); // Destructure setUser from useUser
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
   const modifyProfile = () => {
     setIsModalOpen(true);
@@ -16,7 +17,7 @@ const Profile = ({ redirectToLogin }) => {
 
   const handleSave = async (updatedUser) => {
     try {
-      const response = await fetch('http://localhost:8080/update-profile', { // Send the updated user data to the server
+      const response = await fetch(`${API_URL}/update-profile`, { // Send the updated user data to the server
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

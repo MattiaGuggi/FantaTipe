@@ -1,12 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const Users = () => {
     const { username } = useParams();
     const [profile, setProfile] = useState(null);
+    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
     useEffect(() => {
-        fetch(`http://localhost:8080/profile/${username}`)
+        fetch(`${API_URL}/profile/${username}`)
             .then(response => response.json())
             .then(data => setProfile(data.user))
             .catch(err => console.log("Error loading profile", err));

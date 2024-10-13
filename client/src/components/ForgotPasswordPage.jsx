@@ -10,11 +10,12 @@ const ForgotPasswordPage = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const location = useLocation();
 	const userEmail = location.state?.email || 'default@gmail.com';
+	const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await fetch("http://localhost:8080/auth/forgot-password", {
+			const response = await fetch(`${API_URL}/auth/forgot-password`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

@@ -1,17 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
  /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 
 const SearchBar = ({ setResult }) => {
     const [input, setInput] = useState('');
     const [users, setUsers] = useState([]);
-    const navigate = useNavigate();
+    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:8080/search');
+                const response = await fetch(`${API_URL}/search`);
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {

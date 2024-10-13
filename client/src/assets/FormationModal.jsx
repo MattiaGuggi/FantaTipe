@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useUser } from './UserContext';
@@ -8,12 +9,13 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
     const [formationInput, setFormationInput] = useState('');
     const [formationData, setFormationData] = useState([]);
     const [pfps, setPfps] = useState({}); // State to store profile pictures
+    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
     useEffect(() => {
         if (isOpen) {
             const getFormation = async () => {
                 try {
-                    const response = await fetch(`http://localhost:8080/get-formation/${user.username}`);
+                    const response = await fetch(`${API_URL}/get-formation/${user.username}`);
                     const data = await response.json();
                     if (response.ok) {
                         setFormationData(data.formation || []);
