@@ -175,7 +175,7 @@ app.post('/auth/forgot-password', async (req, res) => {
         const resetToken = crypto.randomBytes(20).toString("hex"); // Generate reset token
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
         
-        await sendPasswordResetEmail(email, `http://localhost:8080/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
+        await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
         
         res.json({ success: true, message: "Password reset link sent to your email", token: resetToken }); // Return the token and success response
     } else {
