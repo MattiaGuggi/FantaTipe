@@ -39,7 +39,7 @@ const Formation = () => {
     if (username === user.username) return user.pfp;
     else {
       try {
-        const response = await fetch('http://localhost:8080/get-users');
+        const response = await fetch(`${API_URL}/get-users`);
         const data = await response.json();
 
         if (response.ok) {
@@ -71,7 +71,7 @@ const Formation = () => {
     const updatedFormation = newFormation.formation;
 
     try {
-      const response = await fetch('http://localhost:8080/update-formation', {
+      const response = await fetch(`${API_URL}/update-formation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
