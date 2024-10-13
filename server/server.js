@@ -167,7 +167,7 @@ app.post('/auth/verify-email', (req, res) => {
     }
 });
 
-app.post('/forgot-password', async (req, res) => {
+app.post('/auth/forgot-password', async (req, res) => {
     const { email } = req.body;
     let users = readUsersFromFile();
     const user = users.find(user => user.email === email);
