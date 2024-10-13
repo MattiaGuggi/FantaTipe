@@ -15,11 +15,12 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const { setUser } = useUser();
   const navigate = useNavigate();
+  const API_URL = import.meta.env.NODE_ENV === 'production' ? 'https://fantatipe-1-0.onrender.com' : 'http://localhost:8080';
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/signup',
+      const response = await axios.post(`${API_URL}/signup`,
         { email: email, password: password, username: name },
         { withCredentials: true, }
       );
