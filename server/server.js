@@ -214,6 +214,7 @@ app.get('/auth/reset-password/:token', (req, res) => {
 
 app.get('/search', (req, res) => {
     const users = readUsersFromFile();
+    console.log('Fetched users:', users);  // Log fetched users
     res.json(users);
 });
 
