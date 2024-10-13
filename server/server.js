@@ -13,10 +13,10 @@ import {
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
 
-const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5173" : "";
+const API_URL = import.meta.env.MODE == "production" ? "http://localhost:8080" : "";
 
 const corsOptions = {
-    origin: [API_URL],
+    origin: ["http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -33,7 +33,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.options('*', cors({
-    origin: API_URL,
+    origin: 'http://localhost:5173',
     credentials: true
 }));
 
@@ -175,7 +175,7 @@ app.post('/auth/forgot-password', async (req, res) => {
         const resetToken = crypto.randomBytes(20).toString("hex"); // Generate reset token
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
         
-        await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
+        await sendPasswordResetEmail(email, `http://localhost:8080/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
         
         res.json({ success: true, message: "Password reset link sent to your email", token: resetToken }); // Return the token and success response
     } else {
@@ -208,7 +208,7 @@ app.get('/auth/reset-password/:token', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email not provided' });
     }
 
-    res.redirect(`${API_URL}/reset-password?token=${token}&email=${email}`);
+    res.redirect(`http://localhost:5173/reset-password?token=${token}&email=${email}`);
 });
 
 app.get('/search', (req, res) => {
