@@ -14,7 +14,7 @@ import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
 
 const PORT = process.env.PORT || 8080;
-const API_URL = process.env.NODE_ENV === 'production'? '' : 'http://localhost:8080';
+const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' ? '*' : 'http://localhost:5173',
     credentials: true,
@@ -175,7 +175,7 @@ app.post('/auth/forgot-password', async (req, res) => {
         const resetToken = crypto.randomBytes(20).toString("hex"); // Generate reset token
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
         
-        await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
+        await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`);
         
         res.json({ success: true, message: "Password reset link sent to your email", token: resetToken }); // Return the token and success response
     } else {
