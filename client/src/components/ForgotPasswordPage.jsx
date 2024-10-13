@@ -14,6 +14,7 @@ const ForgotPasswordPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		console.log('clicked');
 		try {
 			const response = await fetch(`${API_URL}/auth/forgot-password`, {
 				method: "POST",
