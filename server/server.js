@@ -13,8 +13,6 @@ import {
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
 
-const API_URL = import.meta.env.MODE == "development" ? "http://localhost:8080" : "";
-
 const corsOptions = {
     origin: ["http://localhost:5173"],
     credentials: true,
@@ -36,6 +34,8 @@ app.options('*', cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
+
+const API_URL = import.meta.env.MODE == "development" ? "http://localhost:8080" : "";
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "/client/dist")));
