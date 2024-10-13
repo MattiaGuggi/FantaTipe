@@ -14,8 +14,9 @@ import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
 
 const PORT = process.env.PORT;
+const CLIENT_URL = process.env.CLIENT_URL;
 const corsOptions = {
-    origin: ["http://localhost:5173"],
+    origin: [CLIENT_URL],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -32,7 +33,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.options('*', cors({
-    origin: 'http://localhost:5173',
+    origin: CLIENT_URL,
     credentials: true
 }));
 
@@ -207,7 +208,7 @@ app.get('/auth/reset-password/:token', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email not provided' });
     }
 
-    res.redirect(`http://localhost:5173/reset-password?token=${token}&email=${email}`);
+    res.redirect(`${CLIENT_URL}/reset-password?token=${token}&email=${email}`);
 });
 
 app.get('/search', (req, res) => {
