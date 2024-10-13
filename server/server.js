@@ -13,8 +13,10 @@ import {
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
 
+const PORT = process.env.PORT || 8080;
+const API_URL = process.env.NODE_ENV === 'production'? '' : 'http://localhost:8080';
 const corsOptions = {
-    origin: ["http://localhost:5173"],
+    origin: process.env.NODE_ENV === 'production' ? '*' : 'http://localhost:5173',
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,8 +36,6 @@ app.options('*', cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
-
-const API_URL = import.meta.env.MODE == "development" ? "http://localhost:8080" : "";
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "/client/dist")));
@@ -338,8 +338,8 @@ app.get('/get-users', (req, res) => {
     res.json({ users: users});
 });
   
-app.listen(8080, () => {
-    console.log('Server started on port 8080');
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
 });
 
 const sendVerificationEmail = async (email, verificationToken) => {
