@@ -24,6 +24,10 @@ const Formation = () => {
             email: user?.email,
           }),
         });
+        if (!response.ok) {
+          const errorText = await response.text(); // Get response text for debugging
+          throw new Error(`Error fetching formation: ${response.status} ${errorText}`);
+        }
         const data = await response.json();
   
         if (data.success) setFormation(data.formation);
@@ -33,7 +37,7 @@ const Formation = () => {
       }
     };
     if (user) usersFormation();
-  }, [user, API_URL]);
+  }, [user]);
 
   const getUserPfp = async (username) => {
     if (username === user.username) return user.pfp;

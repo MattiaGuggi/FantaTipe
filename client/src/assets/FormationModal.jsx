@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useUser } from './UserContext';
@@ -15,6 +16,10 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
             const getFormation = async () => {
                 try {
                     const response = await fetch(`${API_URL}/get-formation/${user.username}`);
+                    if (!response.ok) {
+                      const errorText = await response.text(); // Get response text for debugging
+                      throw new Error(`Error fetching formation modal: ${response.status} ${errorText}`);
+                    }
                     const data = await response.json();
                     if (response.ok) {
                         setFormationData(data.formation || []);
@@ -27,7 +32,7 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
             };
             getFormation();
         }
-    }, [isOpen, user.username, API_URL]);
+    }, [isOpen, user.username]);
 
     // Fetch profile pictures for formation members
     useEffect(() => {
