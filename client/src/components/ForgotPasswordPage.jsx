@@ -10,7 +10,7 @@ const ForgotPasswordPage = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const location = useLocation();
 	const userEmail = location.state?.email || 'default@gmail.com';
-	const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+	const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "https://fantatipe-1-0.onrender.com";
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
