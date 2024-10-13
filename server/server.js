@@ -12,12 +12,10 @@ import {
 } from "./mailtrap/emailTemplates.js";
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { getTopProfilesByPoints, getTrendingProfiles } from './points/trendingProfiles.js';
-import { getUsersFromDB, writeUserToDB } from './DB/database.js';
 
-const PORT = process.env.PORT || 8080;
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://fantatipe-1-0.onrender.com' : 'http://localhost:8080';
+const PORT = process.env.PORT;
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' ? 'https://fantatipe-1-0.onrender.com' : 'http://localhost:5173',
+    origin: ["http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -175,8 +173,8 @@ app.post('/auth/forgot-password', async (req, res) => {
     if (user) {
         const resetToken = crypto.randomBytes(20).toString("hex"); // Generate reset token
         const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
-
-        await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`);
+        
+        await sendPasswordResetEmail(email, `http://localhost:8080/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`); // Send email with reset token link
         
         res.json({ success: true, message: "Password reset link sent to your email", token: resetToken }); // Return the token and success response
     } else {
