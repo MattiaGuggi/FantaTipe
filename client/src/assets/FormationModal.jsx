@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useUser } from './UserContext';
@@ -28,7 +27,7 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
             };
             getFormation();
         }
-    }, [isOpen, user.username]);
+    }, [isOpen, user.username, API_URL]);
 
     // Fetch profile pictures for formation members
     useEffect(() => {

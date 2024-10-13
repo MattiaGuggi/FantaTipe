@@ -33,7 +33,7 @@ const Formation = () => {
       }
     };
     if (user) usersFormation();
-  }, [user]);
+  }, [user, API_URL]);
 
   const getUserPfp = async (username) => {
     if (username === user.username) return user.pfp;
