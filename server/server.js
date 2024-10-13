@@ -3,6 +3,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import path from 'path';
 import {
 	PASSWORD_RESET_REQUEST_TEMPLATE,
