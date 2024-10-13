@@ -29,7 +29,6 @@ const ForgotPasswordPage = () => {
 	
 			if (data.success) {
 				setIsSubmitted(true);
-				
 			}
 		} catch (error) {
 			console.error("Verification error:", error);
