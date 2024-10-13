@@ -11,10 +11,6 @@ const SearchBar = ({ setResult }) => {
         const fetchUsers = async () => {
             try {
                 const response = await fetch(`${API_URL}/search`);
-                if (!response.ok) {
-                  const errorText = await response.text(); // Get response text for debugging
-                  throw new Error(`Error fetching searchbar: ${response.status} ${errorText}`);
-                }
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {

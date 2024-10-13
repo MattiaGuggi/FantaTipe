@@ -24,10 +24,6 @@ const Formation = () => {
             email: user?.email,
           }),
         });
-        if (!response.ok) {
-          const errorText = await response.text(); // Get response text for debugging
-          throw new Error(`Error fetching formation: ${response.status} ${errorText}`);
-        }
         const data = await response.json();
   
         if (data.success) setFormation(data.formation);
