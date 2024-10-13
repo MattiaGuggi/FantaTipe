@@ -44,7 +44,7 @@ function App() {
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/email-verification" element={<EmailVerificationPage onSignup={handleSignup}/>} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="*" element={<Login onLogin={handleLogin} />} />
             </Routes>
