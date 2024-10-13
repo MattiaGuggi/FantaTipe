@@ -21,7 +21,7 @@ const ForgotPasswordPage = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					email: userEmail,
+					email: email,
 				}),
 			});
 	
