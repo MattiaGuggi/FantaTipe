@@ -10,7 +10,7 @@ const Formation = () => {
   const [pfps, setPfps] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [zoomedImg, setZoomedImg] = useState(null);
-  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "https://fantatipe-1-0.onrender.com";
 
   useEffect(() => {
     const usersFormation = async () => {

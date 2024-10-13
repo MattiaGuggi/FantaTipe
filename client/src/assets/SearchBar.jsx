@@ -6,7 +6,7 @@ import { FaSearch } from 'react-icons/fa';
 const SearchBar = ({ setResult }) => {
     const [input, setInput] = useState('');
     const [users, setUsers] = useState([]);
-    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "https://fantatipe-1-0.onrender.com";
 
     useEffect(() => {
         const fetchUsers = async () => {
