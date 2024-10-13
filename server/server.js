@@ -167,7 +167,7 @@ app.post('/auth/verify-email', (req, res) => {
     }
 });
 
-app.post('/auth/forgot-password', async (req, res) => {
+app.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
     let users = readUsersFromFile();
     const user = users.find(user => user.email === email);
@@ -209,7 +209,7 @@ app.get('/auth/reset-password/:token', (req, res) => {
         return res.status(400).json({ success: false, message: 'Email not provided' });
     }
 
-    res.redirect(`${CLIENT_URL}/auth/reset-password?token=${token}&email=${email}`);
+    res.redirect(`${CLIENT_URL}/reset-password?token=${token}&email=${email}`);
 });
 
 app.get('/search', (req, res) => {
