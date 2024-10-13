@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
   };
 
   const handleForgotPassword = () => {
-    navigate('/forgot-password', { state: { email }});
+    navigate('/auth/forgot-password', { state: { email }});
   };
 
   const handleSignup = () => {
