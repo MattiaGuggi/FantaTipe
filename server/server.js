@@ -3,7 +3,6 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import { fileURLToPath } from 'url';
 import path from 'path';
 import {
 	PASSWORD_RESET_REQUEST_TEMPLATE,
@@ -16,9 +15,10 @@ import { connectDB, getUsersFromDB, createUser, findUser, updateUser, updateForm
 
 const PORT = process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
-const API_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "https://fantatipe-1-0.onrender.com";
+const API_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "";
+const __dirname = path.resolve();
 const corsOptions = {
-    origin: [CLIENT_URL],
+    origin: CLIENT_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -40,6 +40,27 @@ if (process.env.NODE_ENV === "production") {
 
 let verificationCodes = {};
 const MAX = 7;
+
+
+// Updates every users' points
+async function updatePoints() {
+    const users = getUsersFromDB();
+    const trendingProfiles = getTrendingProfiles(users); // Returns array with objects corresponding to all users' usernames and relative points
+
+    users.forEach(user => { // Visits every single profile
+        const userFormation = user.formation; // Gets array of formation for a user (username reference)
+
+        userFormation.forEach(chosenProfile => { // Visits every choson profile in each users' formation
+            trendingProfiles.forEach(trendingProfile => { // Visits every trending profile
+                if (chosenProfile === trendingProfile.username && trendingProfile.points) { // Compares the formation to a trending profile
+                    user.points += trendingProfile.points; // Updates user's points by adding the new points
+                }
+            });
+        });
+    });
+
+    await updateUser(users); // Save updated users to the file
+}
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -168,12 +189,7 @@ app.get('/profile/:username', async (req, res) => {
     if (user) {
         res.json({
             success: true,
-            user: {
-                email: user.email,
-                username: user.username,
-                points: user.points,
-                pfp: user.pfp
-            }
+            user: user
         });
     }
     else
@@ -181,7 +197,7 @@ app.get('/profile/:username', async (req, res) => {
 });
 
 app.post('/update-profile', async (req, res) => {
-    // getTrendingProfiles();
+    // updatePoints();
     const { email, username, password, pfp } = req.body;
 
     const user = await findUser({ email: email });
