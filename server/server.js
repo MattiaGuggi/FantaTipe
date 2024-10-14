@@ -25,7 +25,7 @@ const corsOptions = {
 };
 const app = express();
 const MAX = 7;
-let verificationCodes = {};
+let verificationCodes = {}, currentUser;
 
 dotenv.config();
 app.use(express.json());
@@ -103,6 +103,7 @@ app.post('/signup', async (req, res) => {
     };
 
     // Save new user to database
+    // currentUser = newUser;
     await createUser(newUser);
     await sendVerificationEmail(email, verificationToken);
 
@@ -113,11 +114,13 @@ app.post('/signup', async (req, res) => {
     });
 });
 
-app.post('/auth/verify-email', (req, res) => {
+app.post('/auth/verify-email', async (req, res) => {
     const { email, code } = req.body;
 
     if (verificationCodes[email] === code) {
         delete verificationCodes[email];
+        await createUser(newUser); // Save new user to database
+        // await createUser(currentUser);
         res.json({ success: true, message: 'Verification successful' });
     }
     else {

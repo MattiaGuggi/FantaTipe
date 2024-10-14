@@ -115,7 +115,7 @@ const Formation = () => {
       {zoomedImg && (
         <div className='zoomed-image flex flex-col justify-center items-center fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md z-50'>
           <h2 className='text-7xl font-semibold mb-10'>{zoomedImg}</h2>
-          <img className='rounded-full xs:w-64 xs:h-64' src={pfps[zoomedImg]}/>
+          <img className='rounded-full w-64 h-64' src={pfps[zoomedImg]}/>
         </div>
       )}
 

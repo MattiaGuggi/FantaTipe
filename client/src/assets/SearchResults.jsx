@@ -16,7 +16,7 @@ const SearchResults = ({ results, mode, addToFormation }) => {
         else if (mode === 'formation') {
           addToFormation(value);
         }
-      };
+    };
 
     return (
         <div className='w-full bg-[#2f3134] flex flex-col shadow-lg rounded-lg mt-4 max-h[300px] overflow-y-scroll
