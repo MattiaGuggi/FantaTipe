@@ -6,7 +6,7 @@ const SearchResults = ({ results, mode, addToFormation }) => {
     const navigate = useNavigate();
 
     const showProfile = (value) =>  {
-        navigate(`/profile/${value.toLowerCase()}`);
+        navigate(`/profile/${value}`);
     };
 
     const handleResultClick = (value) => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
@@ -19,7 +20,7 @@ const SearchBar = ({ setResult }) => {
         };        
 
         fetchUsers();
-    },);
+    }, []);
 
     const userData = (value) => {
         let result = [];
