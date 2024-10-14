@@ -23,24 +23,14 @@ const corsOptions = {
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
+const app = express();
+const MAX = 7;
+let verificationCodes = {};
 
 dotenv.config();
-const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "/client/dist")));
-
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
-    });
-}
-
-let verificationCodes = {};
-const MAX = 7;
-
 
 // Updates every users' points
 async function updatePoints() {
@@ -275,6 +265,14 @@ app.listen(PORT, () => {
     connectDB();
     console.log(`Server started on port ${PORT}`);
 });
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/client/dist")));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+    });
+}
 
 const sendVerificationEmail = async (email, verificationToken) => {
     email = 'mattiahag@gmail.com';
