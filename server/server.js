@@ -25,7 +25,7 @@ const corsOptions = {
 };
 const app = express();
 const MAX = 7;
-let verificationCodes = {}, currentUser;
+let currentUser;
 
 dotenv.config();
 app.use(express.json());
@@ -81,7 +81,7 @@ app.post('/signup', async (req, res) => {
     const { email, password, username } = req.body;
 
     // Check for existing user
-    const existingUser = await findUser({ email: email });
+    const existingUser = await findUser({ email: email }); 
     const existingUsername = await findUser({ username: username });
 
     if (existingUser)
@@ -90,7 +90,7 @@ app.post('/signup', async (req, res) => {
         return res.json({ success: false, message: 'Username already in use' });
     
     const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-    verificationCodes[email] = verificationToken;
+    const verificationTokenExpiresIn = new Date(Date.now() + 60 * 60 * 1000); // 1hour time
 
     const newUser = {
         email,
@@ -99,7 +99,8 @@ app.post('/signup', async (req, res) => {
         points: 0,
         formation: [],
         pfp: 'https://www.starksfamilyfh.com/image/9/original',
-        verificationToken: verificationToken
+        verificationToken: verificationToken,
+        expiresIn: verificationTokenExpiresIn
     };
 
     // Save new user to database
@@ -117,15 +118,33 @@ app.post('/signup', async (req, res) => {
 app.post('/auth/verify-email', async (req, res) => {
     const { email, code } = req.body;
 
-    if (verificationCodes[email] === code) {
-        delete verificationCodes[email];
-        await createUser(newUser); // Save new user to database
-        // await createUser(currentUser);
-        res.json({ success: true, message: 'Verification successful' });
-    }
-    else {
-        console.log('Invalid verification code');
-        res.json({ success: false, message: 'Invalid verification code' });
+    try {
+        const user = await findUser({ email: email }); // Get user from email
+
+        if (!user) { // Check if the token matches
+            return res.status(400).json({ success: false, message: 'User not found' });
+        }
+
+        if (user.verificationToken != code) { // Check if the token matches
+            return res.status(400).status({ success: false, message: 'Invalid verification code' });
+        }
+        
+        const currentTime = new Date();
+        if (currentTime > user.expiresIn) { // Check if the token has expired
+            await deleteUser({ email: email });
+            return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
+        }
+
+        // Token is valid, mark user as verified
+        user.verified = true;
+        user.verificationToken = null;
+        user.expiresIn = null;
+        await user.save();
+
+        return res.json({ success: true, message: 'Email verified successfully, user created' });
+    } catch (err) {
+        console.error('Error verifying email', err);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 
