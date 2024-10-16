@@ -29,9 +29,12 @@ export const findUser = async (criteria) => {
 
 // Update an existing user
 export const updateUser = async (user) => {
-    return await User.findByIdAndUpdate(user._id, user, { new: true }); // Update the user and return the updated document
+    try  {
+        await User.findByIdAndUpdate(user._id, { $set: user }, { new: true }); // Update the user and return the updated document
+    } catch (err) {
+        console.error('Error updating points', err);
+    }
 };
-
 
 // Updates every user's formation reference
 export const updateFormations = async (oldUsername, newUsername) => {

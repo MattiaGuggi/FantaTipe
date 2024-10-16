@@ -7,6 +7,7 @@ import path from 'path';
 import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE } from "./mailtrap/emailTemplates.js";
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { connectDB, getUsersFromDB, createUser, findUser, updateUser, updateFormations } from './DB/database.js';
+import { getTrendingProfiles } from './points/trendingProfiles.js';
 
 const PORT = process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -256,6 +257,33 @@ app.get('/get-users', async (req, res) => {
     const users = await getUsersFromDB();
     res.json({ users });
 });
+
+app.post('/update-points', async (req, res) => {
+    const { user } = req.body;
+    try {
+        const users = await getUsersFromDB();
+        const trendingProfiles = getTrendingProfiles(users);
+
+        for (const user of users) {
+            const userFormation = user.formation;
+
+            for (const chosenProfile of userFormation) {
+                const trendingProfile = trendingProfiles.find(tp => tp.username === chosenProfile);
+                if (trendingProfile && trendingProfile.points) {
+                    user.points += trendingProfile.points;
+                    await updateUser({ _id: user._id }, { $inc: { points: trendingProfile.points } }); // Increment the user's points
+                    await user.save(); // Save updated points
+                }
+            }
+        }
+
+        res.json({ success: true, message: 'Points updated successfully!', user: user });
+    } catch (err) {
+        console.error('Error updating points: ', err);
+        res.json({ success: false, message: 'Could not update points' });
+    }
+});
+
 
 app.listen(PORT, () => {
     connectDB();
