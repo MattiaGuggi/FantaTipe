@@ -1,4 +1,3 @@
-
 import { getUsersFromDB, updateUser } from '../DB/database.js';
 import { getTrendingProfiles } from './trendingProfiles.js';
 
@@ -19,4 +18,5 @@ export const updatePoints = async () => {
     });
 
     await updateUser(users); // Save updated users to the file
+    console.log('Points updated!');
 };
