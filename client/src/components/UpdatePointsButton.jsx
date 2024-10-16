@@ -21,7 +21,7 @@ const UpdatePointsButton = () => {
         },
         body: JSON.stringify({ user }),
       });
-      
+
       const data = await response.json();
       if (data.success) {
         setMessage(data.message);

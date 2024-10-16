@@ -14,7 +14,7 @@ import Search from './components/Search';
 import Users from './components/Users';
 import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
-import ResetPasswordPage from './components/ResetPasswordPage';
+import ResetPasswordPage from './components/ResetPasswordPage';import io from 'socket.io-client';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

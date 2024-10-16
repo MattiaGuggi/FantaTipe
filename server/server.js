@@ -4,10 +4,12 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import path from 'path';
+import http from 'http';
 import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE } from "./mailtrap/emailTemplates.js";
 import { mailtrapClient, sender } from "./mailtrap/mailtrap.config.js";
 import { connectDB, getUsersFromDB, createUser, findUser, updateUser, updateFormations } from './DB/database.js';
 import { getTrendingProfiles } from './points/trendingProfiles.js';
+import { Server } from 'socket.io';
 
 const PORT = process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -20,6 +22,8 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"],
 };
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const MAX = 7;
 let currentUser;
 
@@ -277,7 +281,9 @@ app.post('/update-points', async (req, res) => {
             }
         }
 
-        res.json({ success: true, message: 'Points updated successfully!', user: user });
+        io.emit('admin-event', { message: 'Your points have been updated! Refresh the page to see the updated ones!' });
+
+        res.status(200).json({ success: true, message: 'Points updated and notifications sent!', user: user });
     } catch (err) {
         console.error('Error updating points: ', err);
         res.json({ success: false, message: 'Could not update points' });

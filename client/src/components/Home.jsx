@@ -1,10 +1,29 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
 import UpdatePointsButton from './UpdatePointsButton';
+import { io } from 'socket.io-client';
 
 const Home = () => {
   const { user } = useUser();
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5173" : "";
+
+  useEffect(() => {
+    const socket = io(API_URL);
+
+    socket.on('connect', () => {
+      console.log('Connected to socket server');
+    });
+    
+    // Listen for admin event notifications
+    socket.on('admin-event', (data) => {
+      alert(data.message);
+    });
+
+    // Clean up the connection when component unmounts
+    return () => socket.off('admin-event');
+  }, []);
 
   return (
     <div>
