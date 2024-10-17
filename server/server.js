@@ -23,9 +23,20 @@ const corsOptions = {
 };
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: CLIENT_URL,
+        methods: ["GET", "POST"]
+    }
+});
 const MAX = 7;
 let currentUser;
+
+io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
+    });
+});
 
 dotenv.config();
 app.use(express.json());
@@ -281,8 +292,7 @@ app.post('/update-points', async (req, res) => {
             }
         }
 
-        io.emit('admin-event', { message: 'Your points have been updated! Refresh the page to see the updated ones!' });
-
+        io.emit('message', { message: 'Your points have been updated! Refresh the page to see your results!' });
         res.status(200).json({ success: true, message: 'Points updated and notifications sent!', user: user });
     } catch (err) {
         console.error('Error updating points: ', err);
@@ -291,7 +301,7 @@ app.post('/update-points', async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     connectDB();
     console.log(`Server started on port ${PORT}`);
 });
