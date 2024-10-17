@@ -95,8 +95,7 @@ app.post('/signup', async (req, res) => {
     };
 
     // Save new user to database
-    // currentUser = newUser;
-    await createUser(newUser);
+    currentUser = newUser;
     await sendVerificationEmail(email, verificationToken);
 
     res.json({
@@ -110,27 +109,21 @@ app.post('/auth/verify-email', async (req, res) => {
     const { email, code } = req.body;
 
     try {
-        const user = await findUser({ email: email }); // Get user from email
-
-        if (!user) { // Check if the token matches
+        if (!currentUser) { // Check if the token matches
             return res.status(400).json({ success: false, message: 'User not found' });
         }
 
-        if (user.verificationToken != code) { // Check if the token matches
+        if (currentUser.verificationToken != code) { // Check if the token matches
             return res.status(400).status({ success: false, message: 'Invalid verification code' });
         }
         
         const currentTime = new Date();
-        if (currentTime > user.expiresIn) { // Check if the token has expired
-            await deleteUser({ email: email });
+        if (currentTime > currentUser.expiresIn) { // Check if the token has expired
             return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
         }
 
         // Token is valid, mark user as verified
-        user.verified = true;
-        user.verificationToken = null;
-        user.expiresIn = null;
-        await user.save();
+        await createUser(currentUser);
 
         return res.json({ success: true, message: 'Email verified successfully, user created' });
     } catch (err) {
