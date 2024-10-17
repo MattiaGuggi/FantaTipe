@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Loader } from "lucide-react";
 import { useUser } from '../assets/UserContext';
-import { io } from 'socket.io-client';
 
 const UpdatePointsButton = () => {
   const { user, setUser } = useUser(); // Destructure setUser from useUser
@@ -10,16 +9,6 @@ const UpdatePointsButton = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
-  const newSocket = io(API_URL);
-
-  useEffect(() => {
-    // Listen for points update
-    newSocket.on('message', (data) => {
-      alert(`${data.message}`);
-    });
-
-    return () => newSocket.close();
-  }, [newSocket]);
 
   const handleUpdatePoints = async () => {
     setLoading(true);

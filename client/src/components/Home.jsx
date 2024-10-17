@@ -6,6 +6,17 @@ import { io } from 'socket.io-client';
 
 const Home = () => {
   const { user } = useUser();
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+  const newSocket = io(API_URL);
+
+  useEffect(() => {
+    // Listen for points update
+    newSocket.on('message', (data) => {
+      alert(`${data.message}`);
+    });
+
+    return () => newSocket.close();
+  }, [newSocket]);
 
   return (
     <div>
