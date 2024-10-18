@@ -114,13 +114,13 @@ const Formation = () => {
     <div className={`relative ${zoomedImg ? 'overflow-hidden' : ''}`} onClick={handleOutsideClick}>
       {zoomedImg && (
         <div className='zoomed-image flex flex-col justify-center items-center fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md z-50'>
-          <h2 className='text-7xl font-semibold mb-10'>{zoomedImg}</h2>
+          <h2 className='text-7xl text-white font-semibold mb-10'>{zoomedImg}</h2>
           <img className='rounded-full w-64 h-64' src={pfps[zoomedImg]}/>
         </div>
       )}
 
       <div className='text-4xl font-bold relative z-10'>
-        <h1 className='mb-10 xs:-mt-20'>Your Formation</h1>
+        <h1 className='mb-10 text-white xs:-mt-20'>Your Formation</h1>
         <div className='p-6 flex justify-center items-center w-[660px] flex-wrap z-20 xs:w-full xs:p-2'>
           {formation.length > 0 ? (
             formation.map((username, index) => (
@@ -136,12 +136,15 @@ const Formation = () => {
             <p>No formation found</p>
           )}
         </div>
-        <button
-          className='bg-white backdrop-filter backdrop-blur-md bg-opacity-10 p-2 rounded-xl mt-10 text-base xs:font-semibold xs:mt-0'
-          onClick={modifyFormation}
-        >
-          Change Formation
-        </button>
+        <div className='relative mt-10'>
+          <button
+            className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4
+            transition-opacity duration-300 hover:bg-black hover:bg-opacity-35 xs:mt-0 xs:font-semibold '
+            onClick={modifyFormation}
+          >
+            Change Formation
+          </button>
+        </div>
         <FormationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

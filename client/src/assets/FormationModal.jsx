@@ -19,7 +19,8 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
                     const data = await response.json();
                     if (response.ok) {
                         setFormationData(data.formation || []);
-                    } else {
+                    }
+                    else {
                         console.error('Error fetching formation:', data.message);
                     }
                 } catch (error) {
@@ -78,7 +79,7 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
                             <div key={index} onClick={() => handleDelete(index)} className='relative m-1 cursor-pointer h-24 w-24'>
                                 <img
                                     className='rounded-full h-full w-full object-cover'
-                                    src={pfps[item] || ''} // Use the fetched profile picture or a default
+                                    src={pfps[item] || ''}
                                     alt={item}
                                 />
                                 <div className='absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 transition-opacity duration-300 hover:opacity-100'></div>

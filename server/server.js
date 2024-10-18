@@ -118,7 +118,7 @@ app.post('/auth/verify-email', async (req, res) => {
         }
         
         const currentTime = new Date();
-        if (currentTime > currentUser.expiresIn) { // Check if the token has expired
+        if (currentTime > currentUser.expiresIn) { // Check if the texpiredoken has 
             return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
         }
 
@@ -293,6 +293,12 @@ app.post('/update-points', async (req, res) => {
     }
 });
 
+app.get('/leaderboard', async (req, res) => {
+    const users = await getUsersFromDB();
+    const sortedUsers = users.sort((a, b) => b.points - a.points);
+    
+    res.json({ success: true, leaderboard: sortedUsers });
+});
 
 server.listen(PORT, () => {
     connectDB();
