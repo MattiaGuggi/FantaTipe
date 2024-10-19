@@ -19,22 +19,38 @@ const SearchResults = ({ results, mode, addToFormation }) => {
     };
 
     return (
-        <div className='w-full bg-[#2f3134] flex flex-col shadow-lg rounded-lg mt-4 max-h[300px] overflow-y-scroll
-        scrollbar-thumb-slate-400 scrollbar-trace-slate-600 xs:mt-2'>
-            {
-                results.map((result, idx) => {
-                    return (
-                        <div key={idx}>
-                            <p className='w-full text-white text-lg mt-1 cursor-pointer py-2 hover:bg-white hover:backdrop-filter hover:backdrop-blur-md hover:bg-opacity-10'
-                                onClick={() => handleResultClick(result)}
-                            >
-                                {result}
-                            </p>
-                        </div>
-                    )
-                })
-            }
-        </div>
+        <>
+            <style>{`
+                .result::-webkit-scrollbar {
+                    width: 10px;
+                }
+                
+                .result::-webkit-scrollbar-thumb {
+                    background-color: rgb(203 213 225 / 1);
+                    border-radius: 5px;
+                }
+                
+                .result::-webkit-scrollbar-track {
+                    background-color: transparent;
+                }
+            `}</style>
+            <div className='result w-full bg-[#2f3134] flex flex-col shadow-lg rounded-lg mt-4 max-h[300px] overflow-y-scroll
+            scrollbar-thumb-slate-400 scrollbar-trace-slate-600 xs:mt-2'>
+                {
+                    results.map((result, idx) => {
+                        return (
+                            <div key={idx}>
+                                <p className='w-full text-white text-lg mt-1 cursor-pointer py-2 hover:bg-white hover:backdrop-filter hover:backdrop-blur-md hover:bg-opacity-10'
+                                    onClick={() => handleResultClick(result)}
+                                >
+                                    {result}
+                                </p>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </>
     )
 }
 

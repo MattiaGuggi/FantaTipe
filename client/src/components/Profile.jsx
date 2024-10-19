@@ -54,8 +54,8 @@ const Profile = ({ redirectToLogin }) => {
         <img src={user.pfp} alt="Profile Picture" className='rounded-full w-52 h-52 xs:w-40 xs:h-40' />
         <div className='relative mt-10'>
           <button
-            className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4
-            transition-opacity duration-300 hover:bg-black hover:bg-opacity-35 xs:mt-0 xs:font-semibold '
+            className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4 shadow-custom
+            transition-opacity duration-300 hover:bg-black hover:bg-opacity-35 xs:mt-0 xs:font-semibold'
             onClick={modifyProfile}
           >
             Modify Profile

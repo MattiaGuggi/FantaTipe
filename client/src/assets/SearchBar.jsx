@@ -42,7 +42,7 @@ const SearchBar = ({ setResult }) => {
     }
 
     return (
-        <div className='bg-[#2f3134] w-full rounded-lg h-[12] p-4 shadow-lg flex items-center xs:h-14'>
+        <div className='bg-[#2f3134] w-full rounded-lg h-[12] p-4 shadow-custom flex items-center xs:h-14'>
             <FaSearch className='text-violet-500 cursor-pointer'/>
             <input type="text" placeholder='Search for users' className='bg-transparent border-none outline-none text-xl ml-1
             placeholder:text-gray-300 text-white w-full' onChange={(e) => handleChange(e.target.value)}/>

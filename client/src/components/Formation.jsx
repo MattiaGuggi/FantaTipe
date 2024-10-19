@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
 import FormationModal from '../assets/FormationModal';
+import { Loader } from 'lucide-react';
 
 const Formation = () => {
   const { user, setUser } = useUser();
@@ -133,12 +134,12 @@ const Formation = () => {
               />
             ))
           ) : (
-            <p>No formation found</p>
+            <Loader className='size-6 animate-spin mx-auto' />
           )}
         </div>
         <div className='relative mt-10'>
           <button
-            className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4
+            className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4 shadow-custom
             transition-opacity duration-300 hover:bg-black hover:bg-opacity-35 xs:mt-0 xs:font-semibold '
             onClick={modifyFormation}
           >

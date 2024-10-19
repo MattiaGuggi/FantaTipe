@@ -68,7 +68,8 @@ const EmailVerificationPage = ({ onSignup }) => {
 				toast.success("Email verified successfully");
 				onSignup();
 				navigate('/home');
-			} else {
+			}
+			else {
 				toast.error(data.message || "Invalid verification code");
 			}
 		} catch (error) {
