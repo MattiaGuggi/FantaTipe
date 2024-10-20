@@ -1,268 +1,40 @@
 import express from 'express';
-import crypto from 'crypto';
-import { findUser, createUser, updateUser, getUsersFromDB, updateFormations } from '../DB/database.js';
-import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSuccessfull } from '../utils/emailUtils.js';
+import { 
+    forgotPassword, 
+    formation, 
+    getFormation, 
+    getResetPassword, 
+    getUsers, 
+    leaderboard, 
+    login, 
+    postResetPassword, 
+    profile, 
+    search, 
+    signup, 
+    updateFormation, 
+    updatePoints, 
+    updateProfile, 
+    verifyEmail 
+} from '../controller/authController.js';
 
 const authRoutes = (io) => {
     const router = express.Router();
-    let currentUser;
 
-    router.post('/login', async (req, res) => {
-        const { email, password } = req.body;
-
-        const user = await findUser({ email: email });
-
-        if (!user) {
-            return res.json({ success: false, message: 'User does not exist' });
-        }
-
-        if (user.password !== password) {
-            return res.json({ success: false, message: 'Invalid password' });
-        }
-
-        res.json({
-            success: true,
-            message: 'Login successful',
-            user: {
-                email: user.email,
-                username: user.username,
-                points: user.points,
-                pfp: user.pfp
-            }
-        });
-    }); 
-
-    router.post('/signup', async (req, res) => {
-        const { email, password, username } = req.body;
-
-        // Check for existing user
-        const existingUser = await findUser({ email: email }); 
-        const existingUsername = await findUser({ username: username });
-
-        if (existingUser)
-            return;
-        if (existingUsername)
-            return res.json({ success: false, message: 'Username already in use' });
-        
-        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-        const verificationTokenExpiresIn = new Date(Date.now() + 60 * 60 * 1000); // 1hour time
-
-        const newUser = {
-            email,
-            password,
-            username,
-            points: 0,
-            formation: [],
-            pfp: 'https://www.starksfamilyfh.com/image/9/original',
-            verificationToken: verificationToken,
-            expiresIn: verificationTokenExpiresIn
-        };
-
-        // Save new user to database
-        currentUser = newUser;
-        await sendVerificationEmail(email, verificationToken);
-
-        res.json({
-            success: true,
-            message: 'Sign up successful, user created',
-            user: newUser
-        });
-    });
-
-    router.post('/auth/verify-email', async (req, res) => {
-        const { email, code } = req.body;
-
-        try {
-            if (!currentUser) { // Check if the token matches
-                return res.status(400).json({ success: false, message: 'User not found' });
-            }
-
-            if (currentUser.verificationToken != code) { // Check if the token matches
-                return res.status(400).status({ success: false, message: 'Invalid verification code' });
-            }
-            
-            const currentTime = new Date();
-            if (currentTime > currentUser.expiresIn) { // Check if the texpiredoken has 
-                return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
-            }
-
-            // Token is valid, create the user
-            await createUser(currentUser);
-
-            return res.json({ success: true, message: 'Email verified successfully, user created' });
-        } catch (err) {
-            console.error('Error verifying email', err);
-            return res.status(500).json({ success: false, message: 'Internal server error' });
-        }
-    });
-
-    router.post('/forgot-password', async (req, res) => {
-        const { email } = req.body;
-        const user = await findUser({ email: email });
-
-        if (user) {
-            const resetToken = crypto.randomBytes(20).toString("hex");
-            await sendPasswordResetEmail(email, `${API_URL}/auth/reset-password/${resetToken}?token=${resetToken}&email=${email}`);
-            res.json({ success: true, message: "Password reset link sent to your email", token: resetToken });
-        }
-        else
-            return res.json({ success: false, message: "User not found" });
-    });
-
-    router.post('/auth/reset-password/:token', async (req, res) => {
-        const { token } = req.params;
-        const { email, newPassword } = req.body;
-
-        const user = await findUser({ email: email });
-
-        if (user) {
-            user.password = newPassword;
-            await updateUser(user);
-            await sendPasswordResetEmailSuccessfull(email);
-            res.json({ success: true, message: 'Password reset successful', token });
-        }
-        else
-            res.json({ success: false, message: 'User not found' });
-    });
-
-    router.get('/auth/reset-password/:token', (req, res) => {
-        const { token } = req.params;
-        const { email } = req.query;
-
-        if (!email) {
-            return res.status(400).json({ success: false, message: 'Email not provided' });
-        }
-
-        res.redirect(`${CLIENT_URL}/reset-password?token=${token}&email=${email}`);
-    });
-
-    router.get('/search', async (req, res) => {
-        const users = await getUsersFromDB();
-        res.json(users);
-    });
-
-    router.get('/profile/:username', async (req, res) => {
-        const { username } = req.params;
-
-        const user = await findUser({ username: username });
-
-        if (user) {
-            res.json({
-                success: true,
-                user: user
-            });
-        }
-        else
-            res.status(404).json({ success: false, message: 'User not found' });
-    });
-
-    router.post('/update-profile', async (req, res) => {
-        const { email, username, password, pfp } = req.body;
-
-        const user = await findUser({ email: email });
-
-        if (user) {
-            const oldUsername = user.username;
-
-            user.username = username;
-            user.password = password;
-            user.pfp = pfp;
-
-            await updateUser(user);
-            
-            await updateFormations(oldUsername, username); // Update other users' formations where the old username exists
-
-            res.json({
-                success: true,
-                message: 'Profile and formations updated successfully',
-                user,
-            });
-        }
-        else
-            res.status(404).json({ success: false, message: 'User not found' });
-    });
-
-    router.post('/formation', async (req, res) => {
-        const { email } = req.body;
-
-        const user = await findUser({ email: email });
-
-        if (user)
-            res.json({ success: true, message: 'Formation found!', formation: user.formation });
-        else
-            res.json({ success: false, message: 'User not found' });
-    });
-
-    router.post('/update-formation', async (req, res) => {
-        const { email, formation } = req.body;
-
-        const user = await findUser({ email: email });
-        if (user) {
-            if (formation.length > MAX) {
-                return res.json({
-                    success: false,
-                    message: 'Formation cannot exceed ' + MAX + ' items'
-                });
-            }
-
-            user.formation = formation;
-            await updateUser(user);
-            res.json({ success: true, user });
-        }
-        else
-            res.json({ success: false, message: 'User not found' });
-    });
-
-    router.get('/get-formation/:username', async (req, res) => {
-        const username = req.params.username;
-
-        const user = await findUser({ username: username });
-
-        if (user) {
-            res.json({ formation: user.formation || '' });
-        }
-        else
-            return res.status(404).json({ message: 'User not found' });
-    });
-
-    router.get('/get-users', async (req, res) => {
-        const users = await getUsersFromDB();
-        res.json({ users });
-    });
-
-    router.post('/update-points', async (req, res) => {
-        const { user } = req.body;
-        try {
-            const users = await getUsersFromDB();
-            const trendingProfiles = getTrendingProfiles(users);
-
-            for (const user of users) {
-                const userFormation = user.formation;
-
-                for (const chosenProfile of userFormation) {
-                    const trendingProfile = trendingProfiles.find(tp => tp.username === chosenProfile);
-                    if (trendingProfile && trendingProfile.points) {
-                        user.points += trendingProfile.points;
-                        await updateUser({ _id: user._id }, { $inc: { points: trendingProfile.points } }); // Increment the user's points
-                        await user.save(); // Save updated points
-                    }
-                }
-            }
-
-            io.emit('message', { message: 'Your points have been updated! Refresh the page to see your results!' });
-            res.status(200).json({ success: true, message: 'Points updated and notifications sent!', user: user });
-        } catch (err) {
-            console.error('Error updating points: ', err);
-            res.json({ success: false, message: 'Could not update points' });
-        }
-    });
-
-    router.get('/leaderboard', async (req, res) => {
-        const users = await getUsersFromDB();
-        const sortedUsers = users.sort((a, b) => b.points - a.points);
-        
-        res.json({ success: true, leaderboard: sortedUsers });
-    });
+    router.post('/login', (req, res) => login(req, res)); 
+    router.post('/signup', (req, res) => signup(req, res));
+    router.post('/auth/verify-email', (req, res) => verifyEmail(req, res));
+    router.post('/forgot-password', (req, res) => forgotPassword(req, res));
+    router.post('/auth/reset-password/:token', (req, res) => postResetPassword(req, res));
+    router.post('/update-profile', (req, res) => updateProfile(req, res));
+    router.post('/formation', (req, res) => formation(req, res));
+    router.post('/update-formation', (req, res) => updateFormation(req, res));
+    router.post('/update-points', (req, res) => updatePoints(req, res, io));
+    router.get('/auth/reset-password/:token', (req, res) => getResetPassword(req, res));
+    router.get('/search', (req, res) => search(req, res));
+    router.get('/profile/:username', (req, res) => profile(req, res));
+    router.get('/get-formation/:username', (req, res) => getFormation(req, res));
+    router.get('/get-users', (req, res) => getUsers(req, res));
+    router.get('/leaderboard', (req, res) => leaderboard(req, res));
 
     return router;
 };

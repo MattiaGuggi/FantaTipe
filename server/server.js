@@ -7,7 +7,7 @@ import http from 'http';
 import { connectDB } from './DB/database.js';
 import { initSocket } from './utils/socketUtils.js';
 import authRoutes from './routes/authRoutes.js';
-import { Server } from 'socket.io';
+import { Server } from 'socket.io';import session from 'express-session';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +32,12 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true } // Set to true in production
+}));
 
 // Routes
 app.use('/', authRoutes(io));
