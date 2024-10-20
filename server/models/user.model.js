@@ -11,5 +11,7 @@ const userSchema = new mongoose.Schema({
     verificationToken: { type: String },
     expiresIn: { type: Date }
 });
-
+/**
+ * User in DB
+ */
 export const User = mongoose.model('User', userSchema);
