@@ -41,7 +41,7 @@ const UpdatePointsButton = () => {
         onClick={handleUpdatePoints}
         className={`bg-gradient-to-r from-indigo-700 to-indigo-900 text-white px-4 py-2 rounded-xl text-lg font-medium w-40 h-16 mb-48
           hover:from-indigo-800 hover:to-indigo-950 shadow-custom 
-          xs:w-40 xs:font-normal xs:mr-0 xs:mb-36`}
+          xs:w-40 xs:font-normal xs:mr-0 xs:mb-32`}
         disabled={loading}
       >
         {loading ? <Loader className='size-6 animate-spin mx-auto' /> : 'Update Points'}
