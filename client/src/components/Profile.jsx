@@ -61,7 +61,7 @@ const Profile = ({ redirectToLogin }) => {
             Modify Profile
           </button>
         </div>
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} user={user} handleSave={handleSave} />
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} user={user|| { username: '', points: '', pfp: '' }} handleSave={handleSave} />
       </div>
     </>
   );

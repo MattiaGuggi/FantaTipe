@@ -24,7 +24,7 @@ const Home = () => {
       {user.username === 'Guggi' ? (
         <>
           <Dashboard />
-          <div className='flex justify-center items-center mt-10 w-full h-auto'>
+          <div className='flex justify-center items-center mt-10 w-full h-auto xs:mt-4'>
             <UpdatePointsButton />
           </div>
         </>

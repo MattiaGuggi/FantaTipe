@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
-import React from 'react';
+import React, { useState } from 'react';
+import { Eye, EyeOff } from "lucide-react";
 
 const Modal = ({ isOpen, onClose, user, handleSave }) => {
   if (!isOpen) return null;
@@ -48,7 +50,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
           <input
             type='text'
             name='username'
-            value={formData.username}
+            value={formData.username || ''}
             onChange={handleChange}
             className='w-full mb-2 p-2 border rounded text-lg font-medium xs:mt-4 xs:text-base'
           />
@@ -56,7 +58,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
           <input
             type='email'
             name='email'
-            value={formData.email}
+            value={formData.email || ''}
             onChange={handleChange}
             className='w-full mb-2 p-2 border rounded text-lg font-medium xs:mt-3 xs:text-base'
           />
@@ -64,10 +66,11 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
           <input
             type='password'
             name='password'
-            value={formData.password}
+            value={formData.password || ''}
             onChange={handleChange}
             className='w-full mb-2 p-2 border rounded text-lg font-medium xs:mt-3 xs:text-base'
           />
+          
         </div>
         <div className='flex justify-between items-center w-full mt-4 xs:mt-10'>
           <img src={formData.pfp} alt='Profile' className='w-32 h-32 object-cover rounded-full xs:w-20 xs:h-20'/>
