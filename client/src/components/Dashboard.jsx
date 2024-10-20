@@ -58,7 +58,7 @@ const Dashboard = () => {
                 }
             `}</style>
 
-            <h1 className='font-bold text-center text-5xl p-4'>Leaderboard</h1>
+            <h1 className='font-bold text-center text-5xl'>Leaderboard</h1>
             <div className='bg-slate-100 text-black font-medium w-9/12 h-auto m-10 mb-2 p-5 rounded-xl'>
                 <div className='scroll-container max-h-96 overflow-y-auto overflow-x-hidden'>
                     {users.length > 0 ? (
