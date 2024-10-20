@@ -13,7 +13,7 @@ import { Server } from 'socket.io';
 
 const PORT = process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
-const API_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "";
+const API_URL = process.env.NODE_ENV === "development" ? "http://localhost:8080" : "https://fantatipe-1-0.onrender.com";
 const __dirname = path.resolve();
 const corsOptions = {
     origin: CLIENT_URL,
