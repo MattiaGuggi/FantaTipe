@@ -7,14 +7,13 @@ import Formation from './components/Formation';
 import Profile from './components/Profile';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import './App.css';
 import { UserProvider } from './assets/UserContext';
 import FloatingShapes from './assets/FloatingShapes';
 import Search from './components/Search';
 import Users from './components/Users';
 import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
-import ResetPasswordPage from './components/ResetPasswordPage';import io from 'socket.io-client';
+import ResetPasswordPage from './components/ResetPasswordPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

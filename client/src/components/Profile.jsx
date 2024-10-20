@@ -55,7 +55,7 @@ const Profile = ({ redirectToLogin }) => {
         <div className='relative mt-10'>
           <button
             className='relative bg-white text-white backdrop-filter backdrop-blur-md bg-opacity-10 rounded-xl text-base p-4 shadow-custom
-            transition-opacity duration-300 hover:bg-black hover:bg-opacity-35 xs:mt-0 xs:font-semibold'
+            transition-opacity duration-300 hover:bg-indigo-500 hover:bg-opacity-10 xs:mt-0 xs:font-semibold'
             onClick={modifyProfile}
           >
             Modify Profile
