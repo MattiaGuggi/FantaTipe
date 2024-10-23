@@ -1,4 +1,3 @@
-
 import crypto from 'crypto';
 import { findUser, createUser, updateUser, getUsersFromDB, updateFormations } from '../DB/database.js';
 import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSuccessfull } from '../utils/emailUtils.js';
@@ -72,7 +71,7 @@ export const verifyEmail = async (req, res) => {
     let currentUser = req.session.user;
 
     try {
-        if (!currentUser) { // Check if the token matches
+        if (!currentUser) { // Check if someone started creating a new user
             return res.status(400).json({ success: false, message: 'User not found' });
         }
 
@@ -81,12 +80,11 @@ export const verifyEmail = async (req, res) => {
         }
         
         const currentTime = new Date();
-        if (currentTime > currentUser.expiresIn) { // Check if the texpiredoken has 
+        if (currentTime > currentUser.expiresIn) { // Check if the token has expired 
             return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
         }
-
-        // Token is valid, create the user
-        await createUser(currentUser);
+        
+        await createUser(currentUser); // Token is valid, create the user
 
         return res.json({ success: true, message: 'Email verified successfully, user created' });
     } catch (err) {
@@ -112,7 +110,7 @@ export const getResetPassword = async (req, res) => {
     const { token } = req.params;
     const { email, newPassword } = req.body;
 
-    const user = await findUser({ email: email });
+    const user = await  ({ email: email });
 
     if (user) {
         user.password = newPassword;
@@ -154,7 +152,9 @@ export const profile = async (req, res) => {
     else
         res.status(404).json({ success: false, message: 'User not found' });
 };
-
+/** 
+ * Updates the user's profile
+*/
 export const updateProfile = async (req, res) => {
     const { email, username, password, pfp } = req.body;
 
@@ -169,7 +169,7 @@ export const updateProfile = async (req, res) => {
 
         await updateUser(user);
         
-        await updateFormations(oldUsername, username); // Update other users' formations where the old username exists
+        await updateFormations(oldUsername, username);
 
         res.json({
             success: true,

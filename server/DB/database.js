@@ -22,7 +22,7 @@ export const connectDB = async () => {
  * Finds user in DB based on email/username
  *
  * @param {newUser} newUser - User to create in DB
- */
+*/
 export const createUser = async (newUser) => {
     const user = new User(newUser);
     await user.save();
@@ -50,7 +50,7 @@ export const updateUser = async (user) => {
     }
 };
 /**
- * Updates every users' formation reference
+ * Updates every users' formation reference from the oldUsername to the newUsername
  *
  * @param {oldUsername} oldUsername - the username you need to search for
  * @param {newUsername} newUsername - the username you need to replace with
