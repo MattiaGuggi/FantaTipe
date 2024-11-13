@@ -43,7 +43,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-      <div className='bg-white p-6 rounded-lg shadow-lg w-1/4 h-2/3 flex flex-col items-center xs:w-10/12 xs:h-5/6'>
+      <div className='bg-white p-6 rounded-lg shadow-lg w-1/4 h-2/3 flex flex-col items-center xs:w-10/12 xs:h-5/6 sm:w-2/3 sm:h-3/4 md:w-2/4 md:h-3/4 xl:h-3/4'>
         <h2 className='text-2xl mb-4 text-center w-full xs:mt-4'>Modify Profile</h2>
         <div className='w-full flex flex-col'>
           <label className='text-lg font-bold mb-1 text-left xs:mt-1'>Username</label>

@@ -68,7 +68,8 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
 
     return (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-            <div className='bg-white p-6 rounded-lg shadow-lg w-1/4 h-2/3 flex flex-col items-center justify-between xs:w-10/12 xs:min-h-5/6 xs:h-auto'>
+            <div className='bg-white p-6 rounded-lg shadow-lg w-1/4 flex flex-col items-center justify-between h-auto xs:w-10/12 xs:min-h-5/6 xs:h-auto
+                sm:w-2/3 md:w-1/2'>
                 <div className='w-full flex flex-col'>
                     <h2 className='text-2xl mb-4 text-center w-full xs:mt-4'>Modify Formation</h2>
                     <Search className='relative top-0 w-full' mode='formation' addToFormation={handleAddFormation} />
@@ -89,7 +90,7 @@ const FormationModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
                         <p>No formation found</p>
                     )}
                 </div>
-                <div className='flex justify-evenly w-full xs:h-10 xs:w-11/12 xs:mt-10'>
+                <div className='flex justify-evenly w-full mt-5 xs:h-10 xs:w-11/12 xs:mt-10'>
                     <button onClick={onClose} className='bg-gradient-to-r from-indigo-700 to-indigo-900 text-transparent bg-clip-text px-4 py-2 rounded-xl shadow-custom text-lg font-medium w-32 hover:bg-gray-500 hover:text-transparent hover:bg-clip-text hover:from-indigo-800 hover:to-indigo-950 xs:w-28 xs:font-normal xs:ml-0'>
                         Cancel
                     </button>
