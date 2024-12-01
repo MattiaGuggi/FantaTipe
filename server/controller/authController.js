@@ -3,6 +3,8 @@ import { findUser, createUser, updateUser, getUsersFromDB, updateFormations } fr
 import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSuccessfull } from '../utils/emailUtils.js';
 import { getTrendingProfiles } from '../points/trendingProfiles.js';
 
+const MAX = 8;
+
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
