@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { findUser, createUser, updateUser, getUsersFromDB, updateFormations } from '../DB/database.js';
 import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSuccessfull } from '../utils/emailUtils.js';
 import { getTrendingProfiles } from '../points/trendingProfiles.js';
+import { getAllGames } from '../games/games.js';
 
 const MAX = 8;
 
@@ -263,4 +264,10 @@ export const leaderboard = async (req, res) => {
     const sortedUsers = users.sort((a, b) => b.points - a.points);
     
     res.json({ success: true, leaderboard: sortedUsers });
+};
+
+export const getGames = async (req, res) => {
+    const games = await getAllGames();
+
+    res.json({ success: true, message: 'Games found!', games: games || '' });
 };

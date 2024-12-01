@@ -14,6 +14,7 @@ import Users from './components/Users';
 import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
+import Games from './components/Games';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,6 +55,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/search" element={<Search className='fixed top-20 w-[450px] xs:w-64'/>} />
                 <Route path="/formation" element={<Formation />} />
+                <Route path="/games" element={<Games />} />
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />
                 <Route path="/profile/:username" element={<Users />} />
                 <Route path="*" element={<Home />} />

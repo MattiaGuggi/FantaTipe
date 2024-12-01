@@ -14,7 +14,8 @@ import {
     updateFormation, 
     updatePoints, 
     updateProfile, 
-    verifyEmail 
+    verifyEmail,
+    getGames
 } from '../controller/authController.js';
 
 const authRoutes = (io) => {
@@ -35,6 +36,7 @@ const authRoutes = (io) => {
     router.get('/get-formation/:username', (req, res) => getFormation(req, res));
     router.get('/get-users', (req, res) => getUsers(req, res));
     router.get('/leaderboard', (req, res) => leaderboard(req, res));
+    router.get('/games', (req, res) => getGames(req, res));
 
     return router;
 };
