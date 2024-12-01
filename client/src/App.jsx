@@ -15,6 +15,11 @@ import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import Games from './components/Games';
+import Demo from './games/Demo';
+import GuessWho from './games/GuessWho';
+import VirtualPlayers from './games/VirtualPlayers';
+import TreasureHunt from './games/TreasureHunt';
+import HotGame from './games/HotGame';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,6 +63,11 @@ function App() {
                 <Route path="/games" element={<Games />} />
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />
                 <Route path="/profile/:username" element={<Users />} />
+                <Route path="/treasure-hunt" element={<TreasureHunt />} />
+                <Route path="/virtual-players" element={<VirtualPlayers />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/guess-who" element={<GuessWho />} />
+                <Route path="/hot-game" element={<HotGame />} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </>
