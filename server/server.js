@@ -16,12 +16,14 @@ const CLIENT_URL = process.env.CLIENT_URL;
 const __dirname = path.resolve();
 const app = express();
 const server = http.createServer(app);
+
 const corsOptions = {
     origin: CLIENT_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
+
 const io = new Server(server, {
     cors: {
         origin: CLIENT_URL,
@@ -37,7 +39,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true } // Set to true in production
+    cookie: { secure: process.env.NODE_ENV === 'production' }, // Secure cookie in production
 }));
 
 // Routes

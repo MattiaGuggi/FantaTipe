@@ -15,7 +15,10 @@ import {
     updatePoints, 
     updateProfile, 
     verifyEmail,
-    getGames
+    getGames,
+    createRoom,
+    joinRoom,
+    fetchRoomDetails
 } from '../controller/authController.js';
 
 const authRoutes = (io) => {
@@ -37,6 +40,9 @@ const authRoutes = (io) => {
     router.get('/get-users', (req, res) => getUsers(req, res));
     router.get('/leaderboard', (req, res) => leaderboard(req, res));
     router.get('/games', (req, res) => getGames(req, res));
+    router.post('/create-room', (req, res) => createRoom(req, res));
+    router.post('/join-room', (req, res) => joinRoom(req, res));
+    router.post('/:key', (req, res) => fetchRoomDetails(req, res));
 
     return router;
 };

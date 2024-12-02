@@ -3,6 +3,7 @@ import { findUser, createUser, updateUser, getUsersFromDB, updateFormations } fr
 import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSuccessfull } from '../utils/emailUtils.js';
 import { getTrendingProfiles } from '../points/trendingProfiles.js';
 import { getAllGames } from '../games/games.js';
+import { Room } from '../models/room.model.js';
 
 const MAX = 8;
 
@@ -270,4 +271,52 @@ export const getGames = async (req, res) => {
     const games = await getAllGames();
 
     res.json({ success: true, message: 'Games found!', games: games || '' });
+};
+
+export const createRoom = async (req, res) => {
+    const { creator } = req.body;
+  
+    if (!creator) return res.status(400).json({ error: 'Creator is required' });
+
+    const generateRoomKey = () => Math.random().toString(36).substring(2, 10);
+  
+    const key = generateRoomKey();
+    try {
+      const newRoom = new Room({ key, creator });
+      await newRoom.save();
+      res.status(201).json({ key, message: 'Room created successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to create room' });
+    }
+};
+
+export const joinRoom = async (req, res) => {
+    const { key, participant } = req.body;
+  
+    try {
+      const room = await Room.findOne({ key });
+      if (!room) return res.status(404).json({ error: 'Room not found' });
+  
+      if (!room.participants.includes(participant)) {
+        room.participants.push(participant);
+        await room.save();
+      }
+  
+      res.status(200).json({ message: 'Joined the room successfully', room });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to join room' });
+    }
+};
+
+export const fetchRoomDetails = async (req, res) => {
+    const { key } = req.params;
+  
+    try {
+      const room = await Room.findOne({ key });
+      if (!room) return res.status(404).json({ error: 'Room not found' });
+  
+      res.status(200).json({ room });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch room details' });
+    }
 };

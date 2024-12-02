@@ -27,7 +27,6 @@ const Games = () => {
                 navigate('/home');
                 break;
         }
-        
     }
 
     useEffect(() => {
@@ -41,11 +40,10 @@ const Games = () => {
                 });
                 const data = await response.json();
 
-                if (data.success) {
+                if (data.success)
                     setGames(data.games);
-                } else {
+                else
                     console.error('Error getting games: ', data.message);
-                }
             } catch (err) {
                 console.error('Error fetching the games', err);
             }
