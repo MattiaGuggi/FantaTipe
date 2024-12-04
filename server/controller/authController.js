@@ -4,6 +4,8 @@ import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetEmailSu
 import { getTrendingProfiles } from '../points/trendingProfiles.js';
 import { getAllGames } from '../games/games.js';
 import { Room } from '../models/room.model.js';
+import { User } from '../models/user.model.js';
+import { log } from 'console';
 
 const MAX = 8;
 
@@ -274,37 +276,55 @@ export const getGames = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-    const { creator } = req.body;
-  
+    const { creator, name } = req.body;
+
     if (!creator) return res.status(400).json({ error: 'Creator is required' });
 
-    const generateRoomKey = () => Math.random().toString(36).substring(2, 10);
-  
-    const key = generateRoomKey();
     try {
-      const newRoom = new Room({ key, creator });
-      await newRoom.save();
-      res.status(201).json({ key, message: 'Room created successfully' });
+        const creatorUser = await User.findOne({ username: creator });
+
+        if (!creatorUser) return res.status(404).json({ error: 'User not found in the DB' });
+
+        const generateRoomKey = () => Math.random().toString(36).substring(2, 10);
+        const key = generateRoomKey();
+
+        // creatorUser.username must be the same as the passed variable 'creator'
+        const newRoom = new Room({
+            key,
+            name,
+            creator: creatorUser.username,
+        });
+
+        await newRoom.save();
+
+        res.status(201).json({ success: true, roomKey: key, message: 'Room created successfully' });
+
     } catch (error) {
-      res.status(500).json({ error: 'Failed to create room' });
+        res.status(500).json({ error: 'Failed to create room', details: error.message });
     }
 };
 
 export const joinRoom = async (req, res) => {
     const { key, participant } = req.body;
+
+    if (!key || !participant) return res.status(400).json({ error: 'Room key and participant are required' });
   
     try {
-      const room = await Room.findOne({ key });
-      if (!room) return res.status(404).json({ error: 'Room not found' });
+        const room = await Room.findOne({ key });
+        if (!room) return res.status(404).json({ error: 'Room not found' });
+
+        if (room.creator === participant) {
+            return res.status(202).json({ success: false, message: 'You cannot join a room you created' });
+        }
+
+        if (!room.participants.includes(participant)) {
+            room.participants.push(participant);
+            await room.save();
+        }
   
-      if (!room.participants.includes(participant)) {
-        room.participants.push(participant);
-        await room.save();
-      }
-  
-      res.status(200).json({ message: 'Joined the room successfully', room });
+        res.status(200).json({ success: true, message: 'Joined the room successfully', room });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to join room' });
+        res.status(500).json({ error: 'Failed to join room' });
     }
 };
 
@@ -312,11 +332,11 @@ export const fetchRoomDetails = async (req, res) => {
     const { key } = req.params;
   
     try {
-      const room = await Room.findOne({ key });
-      if (!room) return res.status(404).json({ error: 'Room not found' });
+        const room = await Room.findOne({ key });
+        if (!room) return res.status(404).json({ error: 'Room not found' });
   
-      res.status(200).json({ room });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch room details' });
+        res.status(200).json({ success: true, room });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch room details' });
     }
 };

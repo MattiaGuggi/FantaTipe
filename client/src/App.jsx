@@ -22,9 +22,11 @@ import TreasureHunt from './games/TreasureHunt';
 import HotGame from './games/HotGame';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
+import Room from './components/Room';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [room, setRoom] = useState('');
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -71,7 +73,8 @@ function App() {
                 <Route path="/guess-who" element={<GuessWho />} />
                 <Route path="/hot-game" element={<HotGame />} />
                 <Route path="/create-room" element={<CreateRoom />} />
-                <Route path="/join-room" element={<JoinRoom />} />
+                <Route path="/join-room" element={<JoinRoom setRoom={setRoom} />} />
+                <Route path="/:key" element={<Room roomId={room}/>} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </>

@@ -26,7 +26,8 @@ const Input = ({ icon: Icon, type: propsType, ...props }) => {
 			<input
 				{...props}
 				type={type}
-				className="w-full pl-10 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700 placeholder-gray-400 transition duration-200"
+				className="w-full pl-10 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
+				placeholder-gray-400 transition duration-200"
 			/>
 			{isLockIcon && (
 				<div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
