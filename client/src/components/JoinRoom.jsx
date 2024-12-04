@@ -1,12 +1,37 @@
-import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { useEffect, useState } from 'react';
+
 const JoinRoom = ({ setRoom }) => {
-  const [key, setKey] = useState('');
-  const [participant, setParticipant] = useState('');
-  const navigate = useNavigate();
-  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+    const [key, setKey] = useState('');
+    const [participant, setParticipant] = useState('');
+    const navigate = useNavigate();
+    const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+
+    useEffect(() => {
+        // Retrieve the stored room key and participant name from localStorage
+        const storedRoomKey = localStorage.getItem("roomKey");
+        const storedParticipant = localStorage.getItem("participant");
+
+        if (storedRoomKey && storedParticipant) {
+            setKey(storedRoomKey);
+            setParticipant(storedParticipant);
+        }
+        
+        // Cleanup localStorage when the user disconnects
+        const clearLocalStorage = () => {
+            localStorage.removeItem("roomKey");
+            localStorage.removeItem("participant");
+        };
+    
+        window.addEventListener("unload", clearLocalStorage);
+    
+        // Cleanup the event listener when the component unmounts
+        return () => {
+            window.removeEventListener("unload", clearLocalStorage);
+        };
+    }, []);
 
   const joinRoom = async () => {
     try {
@@ -17,6 +42,10 @@ const JoinRoom = ({ setRoom }) => {
         if (data.success) {
             setRoom(data.room);
             navigate(`/${data.room.key}`);
+
+            // Store the room key and participant name in localStorage
+            localStorage.setItem("roomKey", data.room.key);
+            localStorage.setItem("participant", participant);
         }
         else {
             alert(data.message);

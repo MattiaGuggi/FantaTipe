@@ -52,6 +52,12 @@ const Room = () => {
         setParticipantPfps(pfps);
     };
 
+    // Opzioni per gestione stanza: max players, etc...
+    // Tasto start game per il creator
+    // Tasto delete room per il creator
+    // Tasto exit room per chiunque
+    // Creare una sessione per rimanere loggato nella JoinRoom
+
     useEffect(() => {
         getRoomName();
     }, [key]);
@@ -64,15 +70,16 @@ const Room = () => {
             <h3 className='text-white text-2xl mb-3'>Participants:</h3>
             {roomDetails.participants.length > 0 ? (
                 roomDetails.participants.map((participant) => (
-                    <div key={participant} className="relative w-24 h-24 mb-4">
+                    <div key={participant} className="relative w-32 h-32 mb-4">
                         {/* Participant image */}
                         <img 
                             src={participantPfps[participant] || ''} 
                             alt={`${participant}'s avatar`} 
                             className='w-full h-full rounded-full object-cover'
                         />
-                        
-                        <div className='absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 transition-opacity duration-300 hover:opacity-100 cursor-pointer'></div>
+                        <div className='absolute text-white flex justify-center items-center text-2xl inset-0 bg-black bg-opacity-50 rounded-full opacity-0 transition-opacity duration-300 hover:opacity-100 cursor-pointer'>
+                            {participant}
+                        </div>
                     </div>
                 ))
             ) : (
