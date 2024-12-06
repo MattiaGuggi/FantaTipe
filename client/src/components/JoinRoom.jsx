@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
+import { useUser } from '../assets/UserContext';
 
 const JoinRoom = ({ setRoom }) => {
+    const { user } = useUser();
     const [key, setKey] = useState('');
     const [participant, setParticipant] = useState('');
     const navigate = useNavigate();
@@ -17,6 +20,9 @@ const JoinRoom = ({ setRoom }) => {
         if (storedRoomKey && storedParticipant) {
             setKey(storedRoomKey);
             setParticipant(storedParticipant);
+        }
+        else {
+            setParticipant(user.username);
         }
         
         // Cleanup localStorage when the user disconnects
@@ -51,6 +57,7 @@ const JoinRoom = ({ setRoom }) => {
             alert(data.message);
         }
     } catch (err) {
+        alert(err.response.data.error);
         console.error('Error joining room:', err);
     }
   };
@@ -63,14 +70,6 @@ const JoinRoom = ({ setRoom }) => {
             placeholder="Room Key"
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-                placeholder-gray-400 transition duration-200'
-        />
-        <input
-            type="text"
-            placeholder="Your Name"
-            value={participant}
-            onChange={(e) => setParticipant(e.target.value)}
             className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
                 placeholder-gray-400 transition duration-200'
         />

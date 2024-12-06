@@ -6,6 +6,7 @@ const Games = () => {
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
     const [games, setGames] = useState([]);
     const navigate = useNavigate();
+    
     const redirectToPage = (page) => {
         switch(page) {
             case "Treasure Hunt":

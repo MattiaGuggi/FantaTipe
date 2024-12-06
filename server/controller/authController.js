@@ -276,7 +276,7 @@ export const getGames = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-    const { creator, name } = req.body;
+    const { creator, name, min, max } = req.body;
 
     if (!creator) return res.status(400).json({ error: 'Creator is required' });
 
@@ -292,6 +292,8 @@ export const createRoom = async (req, res) => {
         const newRoom = new Room({
             key,
             name,
+            min,
+            max,
             creator: creatorUser.username,
         });
 
@@ -313,11 +315,7 @@ export const joinRoom = async (req, res) => {
         const room = await Room.findOne({ key });
         if (!room) return res.status(404).json({ error: 'Room not found' });
 
-        if (room.creator === participant) {
-            return res.status(202).json({ success: false, message: 'You cannot join a room you created' });
-        }
-
-        if (!room.participants.includes(participant)) {
+        if (room.participants.length < room.max && !room.participants.includes(participant) && room.creator !== participant) {
             room.participants.push(participant);
             await room.save();
         }
@@ -338,5 +336,19 @@ export const fetchRoomDetails = async (req, res) => {
         res.status(200).json({ success: true, room });
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch room details' });
+    }
+};
+
+export const deleteRoom = async (req, res) => {
+    const { key } = req.params;
+
+    try {
+        const room = await Room.findOneAndDelete({ key });
+        if (!room) return res.status(404).json({ error: 'Room not found' });
+
+
+        res.status(200).json({ success: true, message: 'Room deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete room' });
     }
 };

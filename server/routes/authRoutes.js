@@ -18,7 +18,8 @@ import {
     getGames,
     createRoom,
     joinRoom,
-    fetchRoomDetails
+    fetchRoomDetails,
+    deleteRoom
 } from '../controller/authController.js';
 
 const authRoutes = (io) => {
@@ -43,6 +44,7 @@ const authRoutes = (io) => {
     router.post('/create-room', (req, res) => createRoom(req, res));
     router.post('/join-room', (req, res) => joinRoom(req, res));
     router.post('/:key', (req, res) => fetchRoomDetails(req, res));
+    router.delete('/delete-room/:key', (req, res) => deleteRoom(req, res));
 
     return router;
 };
