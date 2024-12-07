@@ -1,23 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useUser } from '../assets/UserContext';
 import UpdatePointsButton from './UpdatePointsButton';
 import Dashboard from './Dashboard';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
-  const newSocket = io(API_URL);
+  const socket = io(API_URL);
 
   useEffect(() => {
     // Listen for points update
-    newSocket.on('message', (data) => {
+    socket.on('message', (data) => {
       alert(`${data.message}`);
+      navigate('/home');
     });
 
-    return () => newSocket.close();
-  }, [newSocket]);
+    return () => {
+      socket.off('message');
+      socket.disconnect();
+  };
+  }, [socket]);
 
   return (
     <>

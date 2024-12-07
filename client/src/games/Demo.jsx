@@ -27,13 +27,13 @@ const Demo = () => {
       <div className='flex'>
         <div className='flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
             font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-          focus:ring-offset-gray-900 transition duration-200'
+          focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
           onClick={() => room("create")}>
             Create Room
         </div>
         <div className='flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
             font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-            focus:ring-offset-gray-900 transition duration-200'
+            focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
           onClick={() => room("join")}>
             Join Room
         </div>

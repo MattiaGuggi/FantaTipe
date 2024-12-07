@@ -47,7 +47,7 @@ function App() {
         bg-gradient-to-br from-indigo-950 via-violet-950 to-violet-900'>
           <FloatingShapes color="bg-indigo-700" size="w-64 h-64" top="-5%" left="10%" delay={0}/>
           <FloatingShapes color="bg-indigo-700" size="w-48 h-48" top="70%" left="80%" delay={5}/>
-          <FloatingShapes color="bg-indigo-700" size="w-32 h-32" top="40%" left="-10%" delay={2}/>
+          <FloatingShapes color="bg-indigo-700" size="w-32 h-32" top="65%" left="10%" delay={2}/>
           {!isAuthenticated ? (
             <Routes>
               <Route path="/login" element={<Login onLogin={handleLogin} />} />

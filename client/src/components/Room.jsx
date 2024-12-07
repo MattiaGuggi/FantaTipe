@@ -70,6 +70,7 @@ const Room = () => {
     const logOut = () => {
         console.log("Logging out...");
         localStorage.removeItem("roomKey");
+        navigate('/join-room');
     };
 
     // Check the min number of participants
@@ -113,7 +114,7 @@ const Room = () => {
     useEffect(() => {
         socket.on('refreshRoom', (data) => {
             if (data.key === key) {
-                alert(`Room '${data.name}' has been deleted by the creator. Please refresh the page`);
+                alert(`Room '${data.name}' has been deleted by the creator.`);
                 navigate('/join-room');
             }
         });
@@ -172,14 +173,14 @@ const Room = () => {
                     </div>
                 ))
             ) : (
-                <div className='text-white text-xl' onClick={() => logOut()}>No participants joined yet</div>
+                <div className='text-white text-xl'>No participants joined yet</div>
             )}
             <div className="relative inline-block mt-6">
                 <button className="text-white py-3 px-6 border rounded-full shadow-custom hover:opacity-10 transition-all">
                     Log Out
                 </button>
                 <div className="absolute text-white flex justify-center items-center text-2xl inset-0 bg-black bg-opacity-60 rounded-full 
-                    opacity-0 transition-opacity duration-300 hover:opacity-50 cursor-pointer" />
+                    opacity-0 transition-opacity duration-300 hover:opacity-50 cursor-pointer" onClick={() => logOut()} />
             </div>
         </>
     );    

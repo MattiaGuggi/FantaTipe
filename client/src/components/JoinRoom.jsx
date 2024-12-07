@@ -16,21 +16,26 @@ const JoinRoom = ({ setRoom }) => {
     };
 
     useEffect(() => {
-        // Retrieve the stored room key and participant name from localStorage
+        // Retrieve the stored room key from localStorage
         const storedRoomKey = localStorage.getItem("roomKey");
-
+    
         if (storedRoomKey) {
             setKey(storedRoomKey);
         }
         
         // Cleanup localStorage when the user disconnects
-        window.addEventListener("unload", clearLocalStorage);
+        const handleBeforeUnload = () => {
+            clearLocalStorage();
+        };
+        
+        window.addEventListener("beforeunload", handleBeforeUnload);
     
         // Cleanup the event listener when the component unmounts
         return () => {
-            window.removeEventListener("unload", clearLocalStorage);
+            window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
+    
 
   const joinRoom = async () => {
     setParticipant(user.username);

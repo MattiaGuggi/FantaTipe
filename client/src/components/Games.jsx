@@ -55,7 +55,7 @@ const Games = () => {
 
     return (
         <>
-            <div className="text-white font-bold text-3xl mb-12">Games</div>
+            <div className="text-white font-bold text-3xl mb-12 xs:-mt-16 xs:mb-6">Games</div>
             <div className="flex flex-wrap justify-center">
                 {games.length > 0 ? (
                     games.map((game, index) => (
@@ -63,7 +63,7 @@ const Games = () => {
                             key={index}
                             className='flex items-center justify-center cursor-pointer py-5 px-10 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
                             font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-                            focus:ring-offset-gray-900 transition duration-200'
+                            focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
                             onClick={() => redirectToPage(game)}
                         >
                             {game}
