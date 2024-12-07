@@ -338,17 +338,3 @@ export const fetchRoomDetails = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch room details' });
     }
 };
-
-export const deleteRoom = async (req, res) => {
-    const { key } = req.params;
-
-    try {
-        const room = await Room.findOneAndDelete({ key });
-        if (!room) return res.status(404).json({ error: 'Room not found' });
-
-
-        res.status(200).json({ success: true, message: 'Room deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to delete room' });
-    }
-};

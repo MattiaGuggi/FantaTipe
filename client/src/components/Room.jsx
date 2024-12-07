@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../assets/UserContext";
+import { io } from "socket.io-client";
 
 const Room = () => {
     const { user } = useUser();
@@ -11,6 +12,7 @@ const Room = () => {
     const [participantPfps, setParticipantPfps] = useState({});
     const navigate = useNavigate();
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+    const socket = io(API_URL);
 
     const getRoomName = async () => {
         try {
@@ -59,16 +61,7 @@ const Room = () => {
         try {
             if (!key) return;
             
-            const response = await axios.delete(`${API_URL}/delete-room/${key}`);
-            const data = response.data;
-    
-            if (data.success) {
-                // Room deleted successfully
-                navigate('/join-room');
-            }
-            else {
-                console.error('Failed to delete room:', data.error);
-            }
+            socket.emit('deleteRoom', { key: key, name: roomDetails.name });
         } catch (err) {
             console.error('Error deleting room:', err);
         }
@@ -77,7 +70,6 @@ const Room = () => {
     const logOut = () => {
         console.log("Logging out...");
         localStorage.removeItem("roomKey");
-        localStorage.removeItem("participant");
     };
 
     // Check the min number of participants
@@ -93,7 +85,7 @@ const Room = () => {
             // 2) Delete game components and make a universal one with switch cases?
         }
     };
-    
+
     const getRoomDetails = async () => {
         try {
             const response = await axios.get(`${API_URL}/rooms/${key}`);
@@ -102,29 +94,40 @@ const Room = () => {
             console.error('Error getting the room s details', err);
         }
     };
+    
+    const clearLocalStorage = () => {
+        localStorage.removeItem("roomKey");
+
+        // Deletes room if he was the creator
+        if (user.username === getRoomDetails.creator) {
+            socket.emit('deleteRoom', { key: key, name: roomDetails.name });
+        }
+    };
+
+    useEffect(() => {
+        getRoomName();
+    }, [key]);
 
     // Creare una sessione per rimanere loggato nella JoinRoom (da perfezionare)
 
     useEffect(() => {
-        getRoomName();
+        socket.on('refreshRoom', (data) => {
+            if (data.key === key) {
+                alert(`Room '${data.name}' has been deleted by the creator. Please refresh the page`);
+                navigate('/join-room');
+            }
+        });
 
         // Cleanup localStorage when the user disconnects
-        const clearLocalStorage = () => {
-            localStorage.removeItem("roomKey");
-            localStorage.removeItem("participant");
-
-            // Deletes room if he was the creator
-            if (user.username === getRoomDetails.creator)
-                deleteRoom();
-        };
-    
         window.addEventListener("unload", clearLocalStorage);
     
         // Cleanup the event listener when the component unmounts
         return () => {
             window.removeEventListener("unload", clearLocalStorage);
+            socket.off('refreshRoom');
+            socket.disconnect();
         };
-    }, [key]);
+    }, [socket]);
 
     return (
         <>
@@ -150,7 +153,9 @@ const Room = () => {
                     </button>
                 </div>
             ) : (
-                <></>
+                <>
+                    <h2 className='text-white text-xl'>Waiting for the host to start the game...</h2>
+                </>
             )}
             <h3 className='text-white text-2xl mb-3'>Participants:</h3>
             {roomDetails.participants.length > 0 ? (

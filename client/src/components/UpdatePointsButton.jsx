@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Loader } from "lucide-react";
 import { useUser } from '../assets/UserContext';
+import { io } from 'socket.io-client';
 
 const UpdatePointsButton = () => {
   const { user, setUser } = useUser(); // Destructure setUser from useUser
@@ -9,6 +10,7 @@ const UpdatePointsButton = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+  const socket = io(API_URL);
 
   const handleUpdatePoints = async () => {
     setLoading(true);
@@ -26,6 +28,7 @@ const UpdatePointsButton = () => {
       if (data.success) {
         setMessage(data.message);
         setUser(data.user);
+        socket.emit('message', { message: 'Refresh the page for points update!' });
       }
     } catch (err) {
       console.error('Error updating points: ', err);

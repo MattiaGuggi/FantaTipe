@@ -10,10 +10,9 @@ const Demo = () => {
     else if (status === "join") {
       // Check if the user has a stored room key and participant name
       const storedRoomKey = localStorage.getItem("roomKey");
-      const storedParticipant = localStorage.getItem("participant");
 
       // Automatically join the room if the key exists
-      if (storedRoomKey && storedParticipant) {
+      if (storedRoomKey) {
         navigate(`/${storedRoomKey}`);
       }
       else {

@@ -9,8 +9,8 @@ const CreateRoom = () => {
   const [min, setMin] = useState('');
   const [max, setMax] = useState('');
   const [name, setName] = useState('');
-  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const navigate = useNavigate();
+  const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
   const createRoom = async () => {
     setCreator(user.username);
