@@ -60,6 +60,7 @@ const CreateRoom = () => {
               min="0"
               value={min}
               onChange={(e) => setMin(e.target.value)}
+              style={{ appearance: 'none' }}
               className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
                 placeholder-gray-400 transition duration-200'
           />
@@ -69,13 +70,14 @@ const CreateRoom = () => {
               min="0"
               value={max}
               onChange={(e) => setMax(e.target.value)}
+              style={{ appearance: 'none' }}
               className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
                 placeholder-gray-400 transition duration-200'
           />
         </div>
         <button onClick={() => createRoom()} className='text-md mt-8 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
             hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-            transition duration-200'
+            transition-all duration-200 hover:scale-110'
         >
             Create Room
         </button>

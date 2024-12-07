@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../assets/UserContext";
 import { io } from "socket.io-client";
 
-const Room = () => {
+const Room = ({ setIsGameStarted }) => {
     const { user } = useUser();
     const { key } = useParams();
     const [roomDetails, setRoomDetails] = useState({ participants: [] });
@@ -80,6 +80,7 @@ const Room = () => {
         }
         else {
             console.log('Starting game...');
+            socket.emit('startGame', { key: key });
 
             // Project choice:
             // 1) New component?
@@ -109,22 +110,27 @@ const Room = () => {
         getRoomName();
     }, [key]);
 
-    // Creare una sessione per rimanere loggato nella JoinRoom (da perfezionare)
-
     useEffect(() => {
         socket.on('refreshRoom', (data) => {
             if (data.key === key) {
                 alert(`Room '${data.name}' has been deleted by the creator.`);
+                localStorage.removeItem("roomKey");
                 navigate('/join-room');
             }
         });
 
+        socket.on('startGame', () => {
+            alert('Game started');
+            setIsGameStarted(true);
+            navigate('/demo');
+        });
+
         // Cleanup localStorage when the user disconnects
-        window.addEventListener("unload", clearLocalStorage);
+        window.addEventListener("beforeunload", clearLocalStorage);
     
         // Cleanup the event listener when the component unmounts
         return () => {
-            window.removeEventListener("unload", clearLocalStorage);
+            window.removeEventListener("beforeunload", clearLocalStorage);
             socket.off('refreshRoom');
             socket.disconnect();
         };

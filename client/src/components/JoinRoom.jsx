@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 import { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
 
@@ -46,7 +45,14 @@ const JoinRoom = ({ setRoom }) => {
 
         if (data.success) {
             setRoom(data.room);
-            navigate(`/${data.room.key}`);
+
+            // If the game hasn't started yet then go to the room
+            if (data.room.status === 'waiting')
+                navigate(`/${data.room.key}`);
+            // If not, join the started game
+            else {
+                navigate(`/demo`);
+            }
 
             // Store the room key and participant name in localStorage
             localStorage.setItem("roomKey", data.room.key);
@@ -74,7 +80,7 @@ const JoinRoom = ({ setRoom }) => {
         <button onClick={() => joinRoom()}
             className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
             hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-            transition duration-200'
+            transition-all duration-200 hover:scale-110'
         >
             Join Room
         </button>

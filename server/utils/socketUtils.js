@@ -24,6 +24,23 @@ export const initSocket = (io) => {
             }
         });
 
+        socket.on('startGame', async (data) => {
+            console.log('Game started');
+            const key = data.key;
+
+            try {
+                const room = await Room.findOne({ key });
+                if (room) {
+                    console.log(`Room ${key}'s status updated to active.`);
+                    room.status = 'active';
+                    await room.save();
+                    io.emit('startGame');
+                }
+            } catch (err) {
+                console.error(`Error deleting room ${key}:`, err);
+            }
+        });
+
         // Handle disconnection
         socket.on('disconnect', () => {
             console.log(`Client disconnected: ${socket.id}`);

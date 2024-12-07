@@ -27,6 +27,7 @@ import Room from './components/Room';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [room, setRoom] = useState('');
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -69,12 +70,12 @@ function App() {
                 <Route path="/profile/:username" element={<Users />} />
                 <Route path="/treasure-hunt" element={<TreasureHunt />} />
                 <Route path="/virtual-players" element={<VirtualPlayers />} />
-                <Route path="/demo" element={<Demo />} />
+                <Route path="/demo" element={<Demo isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted} />} />
                 <Route path="/guess-who" element={<GuessWho />} />
                 <Route path="/hot-game" element={<HotGame />} />
                 <Route path="/create-room" element={<CreateRoom />} />
                 <Route path="/join-room" element={<JoinRoom setRoom={setRoom} />} />
-                <Route path="/:key" element={<Room roomId={room}/>} />
+                <Route path="/:key" element={<Room roomId={room} setIsGameStarted={setIsGameStarted}/>} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </>

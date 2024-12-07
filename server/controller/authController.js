@@ -331,7 +331,7 @@ export const fetchRoomDetails = async (req, res) => {
   
     try {
         const room = await Room.findOne({ key });
-        if (!room) return res.status(404).json({ error: 'Room not found' });
+        if (!room) return res.status(404).json({ success: false, error: 'Room not found' });
   
         res.status(200).json({ success: true, room });
     } catch (err) {
