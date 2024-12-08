@@ -17,7 +17,7 @@ import ResetPasswordPage from './components/ResetPasswordPage';
 import Games from './components/Games';
 import Demo from './games/Demo';
 import GuessWho from './games/GuessWho';
-import VirtualPlayers from './games/VirtualPlayers';
+import GuessSong from './games/GuessSong';
 import TreasureHunt from './games/TreasureHunt';
 import HotGame from './games/HotGame';
 import CreateRoom from './components/CreateRoom';
@@ -69,7 +69,7 @@ function App() {
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />
                 <Route path="/profile/:username" element={<Users />} />
                 <Route path="/treasure-hunt" element={<TreasureHunt />} />
-                <Route path="/virtual-players" element={<VirtualPlayers />} />
+                <Route path="/guess-song" element={<GuessSong />} />
                 <Route path="/demo" element={<Demo isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted} />} />
                 <Route path="/guess-who" element={<GuessWho />} />
                 <Route path="/hot-game" element={<HotGame />} />

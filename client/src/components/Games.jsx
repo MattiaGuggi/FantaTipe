@@ -12,8 +12,8 @@ const Games = () => {
             case "Treasure Hunt":
                 navigate("/treasure-hunt");
                 break;
-            case "Virtual Players":
-                navigate("/virtual-players");
+            case "Guess Song":
+                navigate("/guess-song");
                 break;
             case "Demo":
                 navigate("/demo");

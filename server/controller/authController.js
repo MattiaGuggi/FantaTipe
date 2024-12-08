@@ -5,7 +5,7 @@ import { getTrendingProfiles } from '../points/trendingProfiles.js';
 import { getAllGames } from '../games/games.js';
 import { Room } from '../models/room.model.js';
 import { User } from '../models/user.model.js';
-import { log } from 'console';
+import axios from 'axios';
 
 const MAX = 8;
 
@@ -341,5 +341,17 @@ export const fetchRoomDetails = async (req, res) => {
         res.status(200).json({ success: true, room });
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch room details' });
+    }
+};
+
+export const searchSong = async (req, res) => {
+    const { q } = req.query;
+
+    try {
+        const response = await axios.get(`https://api.deezer.com/search?q=${q}`);
+        return res.status(200).json({ songs: response.data });
+    } catch (error) {
+        console.error('Error fetching data from Deezer:', error);
+        res.status(500).send('Server Error');
     }
 };
