@@ -8,6 +8,29 @@ export const initSocket = (io) => {
             console.log(`Received message: ${data.message}`);
         });
 
+        socket.on('userJoined', (data) => {
+            console.log(`User joined: ${data.participant}`);
+            
+            io.emit('userJoined', { participant: data.participant });
+        });
+
+        socket.on('userLoggedOut', async (data) => {
+            console.log(`User left: ${data.user}`);
+            
+            try {
+                const key = data.key;
+                const room = await Room.findOne({ key });
+                if (room) {
+                    console.log(`Room ${key}'s participants members updated.`);
+                    room.participants.remove(data.user);
+                    await room.save();
+                    io.emit('userLoggedOut', { participant: data.user });
+                }
+            } catch (err) {
+                console.error('Error leaving the room', err);
+            }
+        });
+
         socket.on('deleteRoom', async (data) => {
             console.log(`Room deleted: ${data.name}`);
             const name = data.name;

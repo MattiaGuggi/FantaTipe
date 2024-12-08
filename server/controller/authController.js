@@ -315,12 +315,17 @@ export const joinRoom = async (req, res) => {
         const room = await Room.findOne({ key });
         if (!room) return res.status(404).json({ error: 'Room not found' });
 
-        if (room.participants.length < room.max && !room.participants.includes(participant) && room.creator !== participant) {
+        if (room.creator === participant) return res.status(200).json({ success: true, message: 'You entered your own room', room });
+        
+        if (room.participants.length === room.max) return res.status(500).json({ error: 'Max participant in the room' });
+
+        if (!room.participants.includes(participant)) {
             room.participants.push(participant);
             await room.save();
+            return res.status(200).json({ success: true, message: 'Joined the room successfully', room });
         }
   
-        res.status(200).json({ success: true, message: 'Joined the room successfully', room });
+        return res.status(400).json({ error: 'Room is full' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to join room' });
     }

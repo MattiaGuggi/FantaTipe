@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
+import { io } from 'socket.io-client';
 
 const JoinRoom = ({ setRoom }) => {
     const { user } = useUser();
@@ -9,17 +10,21 @@ const JoinRoom = ({ setRoom }) => {
     const [participant, setParticipant] = useState('');
     const navigate = useNavigate();
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
+    const socket = io(API_URL);
     
     const clearLocalStorage = () => {
         localStorage.removeItem("roomKey");
+        localStorage.removeItem("participant");
     };
 
     useEffect(() => {
         // Retrieve the stored room key from localStorage
         const storedRoomKey = localStorage.getItem("roomKey");
+        const storedParticipant = localStorage.getItem("participant");
     
         if (storedRoomKey) {
             setKey(storedRoomKey);
+            setParticipant(storedParticipant);
         }
         
         // Cleanup localStorage when the user disconnects
@@ -37,7 +42,10 @@ const JoinRoom = ({ setRoom }) => {
     
 
   const joinRoom = async () => {
-    setParticipant(user.username);
+    // If the participant who logged previously was a different one from now, change him
+    if (participant !== user.username) {
+        setParticipant(user.username);
+    }
     try {
         if (!key || !participant) return;
         const response = await axios.post(`${API_URL}/join-room`, { key, participant });
@@ -56,12 +64,15 @@ const JoinRoom = ({ setRoom }) => {
 
             // Store the room key and participant name in localStorage
             localStorage.setItem("roomKey", data.room.key);
+            localStorage.setItem("participant", participant);
+
+            socket.emit('userJoined', { participant: participant });
         }
         else {
             alert(data.message);
         }
     } catch (err) {
-        alert(err.response.data.error);
+        alert(err.response?.data?.error);
         console.error('Error joining room:', err);
     }
   };

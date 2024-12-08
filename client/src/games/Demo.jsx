@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useUser } from '../assets/UserContext';
 
 const Demo = ({ isGameStarted, setIsGameStarted }) => {
+  const { user } = useUser();
   const navigate = useNavigate();
   const [roomStatus, setRoomStatus] = useState('');
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const storedRoomKey = localStorage.getItem("roomKey");
+  const storedParticipant = localStorage.getItem("participant");
 
   const room = (status) => {
     if (status === "create") {
@@ -19,10 +22,16 @@ const Demo = ({ isGameStarted, setIsGameStarted }) => {
       if (!storedRoomKey) {
         navigate("/join-room");
       }
-      else {
+      // If previous user is the same
+      else if (user.username === storedParticipant) {
         // If the game is not started yet, then go to the room
         // The room's status has been checked when the component was mounted
           navigate(`/${storedRoomKey}`);
+      }
+      // If different user logged in now
+      else {
+        localStorage.setItem("participant", user.username);
+        navigate("/join-room");
       }
     }
   };
@@ -60,6 +69,7 @@ const Demo = ({ isGameStarted, setIsGameStarted }) => {
     if (storedRoomKey && isGameStarted) {
       getRoom(storedRoomKey);
       localStorage.removeItem('roomKey');
+      localStorage.removeItem('participant');
     }
     if (storedRoomKey && !isGameStarted) {
       getRoomStatus(storedRoomKey);

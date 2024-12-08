@@ -14,7 +14,7 @@ const Room = ({ setIsGameStarted }) => {
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
     const socket = io(API_URL);
 
-    const getRoomName = async () => {
+    const getRoomDetails = async () => {
         try {
             if (!key) return;
             const response = await axios.post(`${API_URL}/${key}`);
@@ -70,6 +70,8 @@ const Room = ({ setIsGameStarted }) => {
     const logOut = () => {
         console.log("Logging out...");
         localStorage.removeItem("roomKey");
+        localStorage.removeItem("participant");
+        socket.emit('userLoggedOut', { key: key, user: user.username });
         navigate('/join-room');
     };
 
@@ -81,33 +83,21 @@ const Room = ({ setIsGameStarted }) => {
         else {
             console.log('Starting game...');
             socket.emit('startGame', { key: key });
-
-            // Project choice:
-            // 1) New component?
-            // 2) Delete game components and make a universal one with switch cases?
-        }
-    };
-
-    const getRoomDetails = async () => {
-        try {
-            const response = await axios.get(`${API_URL}/rooms/${key}`);
-            return response.data;
-        } catch (err) {
-            console.error('Error getting the room s details', err);
         }
     };
     
     const clearLocalStorage = () => {
         localStorage.removeItem("roomKey");
+        localStorage.removeItem("participant");
 
         // Deletes room if he was the creator
-        if (user.username === getRoomDetails.creator) {
+        if (user.username === roomDetails.creator) {
             socket.emit('deleteRoom', { key: key, name: roomDetails.name });
         }
     };
 
     useEffect(() => {
-        getRoomName();
+        getRoomDetails();
     }, [key]);
 
     useEffect(() => {
@@ -115,6 +105,7 @@ const Room = ({ setIsGameStarted }) => {
             if (data.key === key) {
                 alert(`Room '${data.name}' has been deleted by the creator.`);
                 localStorage.removeItem("roomKey");
+                localStorage.removeItem("participant");
                 navigate('/join-room');
             }
         });
@@ -123,6 +114,16 @@ const Room = ({ setIsGameStarted }) => {
             alert('Game started');
             setIsGameStarted(true);
             navigate('/demo');
+        });
+
+        socket.on('userJoined', (data) => {
+            console.log(`${data.participant} joined the room!`);
+            getRoomDetails();
+        });
+
+        socket.on('userLoggedOut', (data) => {
+            console.log(`${data.participant} logged out of the room!`);
+            getRoomDetails();
         });
 
         // Cleanup localStorage when the user disconnects
@@ -146,14 +147,14 @@ const Room = ({ setIsGameStarted }) => {
                 <div className='flex m-16 gap-20'>
                     <button className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
                             hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-                            transition duration-200'
+                            transition-all duration-200 hover:scale-110'
                             onClick={() => startGame()}
                     >
                         Start Game
                     </button>
                     <button className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
                         hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-                        transition duration-200'
+                        transition-all duration-200 hover:scale-110'
                         onClick={() => deleteRoom()}
                     >
                         Delete Room
@@ -182,11 +183,11 @@ const Room = ({ setIsGameStarted }) => {
                 <div className='text-white text-xl'>No participants joined yet</div>
             )}
             <div className="relative inline-block mt-6">
-                <button className="text-white py-3 px-6 border rounded-full shadow-custom hover:opacity-10 transition-all">
+                <button className="text-white py-3 px-6 border rounded-full shadow-custom hover:opacity-10 transition-all duration-200 hover:scale-110">
                     Log Out
                 </button>
                 <div className="absolute text-white flex justify-center items-center text-2xl inset-0 bg-black bg-opacity-60 rounded-full 
-                    opacity-0 transition-opacity duration-300 hover:opacity-50 cursor-pointer" onClick={() => logOut()} />
+                    opacity-0 transition-all duration-300 hover:opacity-50 cursor-pointer" onClick={() => logOut()} />
             </div>
         </>
     );    

@@ -32,6 +32,7 @@ const CreateRoom = () => {
         if (data.success) {
           // Store the room key and participant name in localStorage
           localStorage.setItem("roomKey", data.roomKey);
+          localStorage.setItem("participant", creator);
           navigate(`/${data.roomKey}`);
         }
         else {
