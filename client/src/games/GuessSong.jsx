@@ -103,7 +103,6 @@ const GuessSong = () => {
       </div>
     );
   }
-  
   // Second step: wait for all players
   else if (!allReady) {
     return (
@@ -112,6 +111,7 @@ const GuessSong = () => {
       </>
     );
   }
+  // Third step: game logic
   else {
     return (
       <>

@@ -15,19 +15,38 @@ const CreateRoom = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
 
+  const inputControls = () => {
+    if (!name) {
+      alert('Room name is required');
+      return true;
+    }
+    if (min < 0 || max < 0) {
+      alert("Cannot put negative numbers");
+      return true;
+    }
+    if (min > max) {
+      alert("Min cannot be greater than max");
+      return true;
+    }
+    if (!min) {
+      alert('Min is required');
+      return true;
+    }
+    if (!max) {
+      alert('Max is required');
+      return true;
+    }
+    if (!game) {
+      alert('Choose a game');
+      return true;
+    }
+    return false;
+  };
+
   const createRoom = async () => {
     setCreator(user.username);
     try {
-        if (!creator)
-          return;
-        if (min < 0 || max < 0) {
-          alert("Cannot put negative numbers");
-          return;
-        }
-        if (min > max) {
-          alert("Min cannot be greater than max");
-          return;
-        }
+        if (inputControls()) return;
 
         const response = await axios.post(`${API_URL}/create-room`, { creator, name, min, max, game });
         const data = response.data;
