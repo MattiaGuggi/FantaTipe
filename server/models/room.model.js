@@ -5,6 +5,7 @@ const roomSchema = new mongoose.Schema({
   name: { type: String, required: true },
   creator: { type: String, required: true },
   participants: [{ type: String }], // Usernames or IDs
+  game: { type: String, required: true },
   min: { type: Number, required: true, default: 0},
   max: { type: Number, required: true, default: 6},
   status: { type: String, default: 'waiting' }, // e.g., 'waiting', 'active', 'ended'

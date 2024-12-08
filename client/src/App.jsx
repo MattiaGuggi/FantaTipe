@@ -65,12 +65,12 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/search" element={<Search className='fixed top-20 w-[450px] xs:w-64'/>} />
                 <Route path="/formation" element={<Formation />} />
-                <Route path="/games" element={<Games />} />
+                <Route path="/games" element={<Games isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted}/>} />
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />
                 <Route path="/profile/:username" element={<Users />} />
                 <Route path="/treasure-hunt" element={<TreasureHunt />} />
                 <Route path="/guess-song" element={<GuessSong />} />
-                <Route path="/demo" element={<Demo isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted} />} />
+                <Route path="/demo" element={<Demo />} />
                 <Route path="/guess-who" element={<GuessWho />} />
                 <Route path="/hot-game" element={<HotGame />} />
                 <Route path="/create-room" element={<CreateRoom />} />

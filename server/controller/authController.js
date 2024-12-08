@@ -276,7 +276,7 @@ export const getGames = async (req, res) => {
 };
 
 export const createRoom = async (req, res) => {
-    const { creator, name, min, max } = req.body;
+    const { creator, name, min, max, game } = req.body;
 
     if (!creator) return res.status(400).json({ error: 'Creator is required' });
 
@@ -294,6 +294,7 @@ export const createRoom = async (req, res) => {
             name,
             min,
             max,
+            game,
             creator: creatorUser.username,
         });
 
@@ -314,6 +315,8 @@ export const joinRoom = async (req, res) => {
     try {
         const room = await Room.findOne({ key });
         if (!room) return res.status(404).json({ error: 'Room not found' });
+
+        if (room.status === 'active') return res.status(500).json({ error: 'Game already started' });
 
         if (room.creator === participant) return res.status(200).json({ success: true, message: 'You entered your own room', room });
         

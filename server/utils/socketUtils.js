@@ -1,6 +1,8 @@
 import { Room } from '../models/room.model.js';
 
 export const initSocket = (io) => {
+    const roomReadiness = {}; // Track readiness per room
+
     io.on('connection', (socket) => {
         console.log(`Client connected: ${socket.id}`);
 
@@ -10,6 +12,10 @@ export const initSocket = (io) => {
 
         socket.on('userJoined', (data) => {
             console.log(`User joined: ${data.participant}`);
+
+            if (!roomReadiness[data.key]) {
+                roomReadiness[data.key] = new Set();
+            }
             
             io.emit('userJoined', { participant: data.participant });
         });
@@ -44,6 +50,34 @@ export const initSocket = (io) => {
                 }
             } catch (err) {
                 console.error(`Error deleting room ${key}:`, err);
+            }
+        });
+
+        socket.on('ready', async (data) => {
+            const key = data.key;
+            const user = data.user;
+
+            if (!roomReadiness[key]) {
+                roomReadiness[key] = new Set();
+            }
+
+            roomReadiness[key].add(user);
+
+            try {
+                const room = await Room.findOne({ key });
+                if (room) {
+                    const totalParticipants = room.participants.length;
+
+                    // The stored players must be the same as the participants + the creator
+                    if (roomReadiness[key].size === totalParticipants + 1) {
+                        io.emit('allReady', { key });
+                    }
+                    else {
+                        io.emit('notReady', { ready: roomReadiness[key].size });
+                    }
+                }
+            } catch (err) {
+                console.error('Error checking room readiness:', err);
             }
         });
 

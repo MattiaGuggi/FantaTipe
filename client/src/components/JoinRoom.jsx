@@ -16,66 +16,66 @@ const JoinRoom = ({ setRoom }) => {
         localStorage.removeItem("roomKey");
         localStorage.removeItem("participant");
     };
-
-    useEffect(() => {
-        // Retrieve the stored room key from localStorage
-        const storedRoomKey = localStorage.getItem("roomKey");
-        const storedParticipant = localStorage.getItem("participant");
     
-        if (storedRoomKey) {
-            setKey(storedRoomKey);
-            setParticipant(storedParticipant);
+
+    const joinRoom = async () => {
+        // If the participant who logged previously was a different one from now, change him
+        if (participant !== user.username) {
+            setParticipant(user.username);
         }
-        
-        // Cleanup localStorage when the user disconnects
-        const handleBeforeUnload = () => {
-            clearLocalStorage();
-        };
-        
-        window.addEventListener("beforeunload", handleBeforeUnload);
-    
-        // Cleanup the event listener when the component unmounts
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-        };
-    }, []);
-    
+        try {
+            if (!key || !participant) return;
+            const response = await axios.post(`${API_URL}/join-room`, { key, participant });
+            const data = response.data;
 
-  const joinRoom = async () => {
-    // If the participant who logged previously was a different one from now, change him
-    if (participant !== user.username) {
-        setParticipant(user.username);
-    }
-    try {
-        if (!key || !participant) return;
-        const response = await axios.post(`${API_URL}/join-room`, { key, participant });
-        const data = response.data;
+            if (data.success) {
+                setRoom(data.room);
 
-        if (data.success) {
-            setRoom(data.room);
+                // If the game hasn't started yet then go to the room
+                if (data.room.status === 'waiting')
+                    navigate(`/${data.room.key}`);
+                // If not, join the started game
+                else {
+                    navigate(`/${data.room.game.toLowerCase().replace(' ', '-')}`);
+                }
 
-            // If the game hasn't started yet then go to the room
-            if (data.room.status === 'waiting')
-                navigate(`/${data.room.key}`);
-            // If not, join the started game
-            else {
-                navigate(`/demo`);
+                // Store the room key and participant name in localStorage
+                localStorage.setItem("roomKey", data.room.key);
+                localStorage.setItem("participant", participant);
+
+                socket.emit('userJoined', { key: key, participant: participant });
             }
-
-            // Store the room key and participant name in localStorage
-            localStorage.setItem("roomKey", data.room.key);
-            localStorage.setItem("participant", participant);
-
-            socket.emit('userJoined', { participant: participant });
+            else {
+                alert(data.message);
+            }
+        } catch (err) {
+            alert(err.response?.data?.error);
+            console.error('Error joining room:', err);
         }
-        else {
-            alert(data.message);
-        }
-    } catch (err) {
-        alert(err.response?.data?.error);
-        console.error('Error joining room:', err);
-    }
-  };
+    };
+
+  useEffect(() => {
+      // Retrieve the stored room key from localStorage
+      const storedRoomKey = localStorage.getItem("roomKey");
+      const storedParticipant = localStorage.getItem("participant");
+  
+      if (storedRoomKey) {
+          setKey(storedRoomKey);
+          setParticipant(storedParticipant);
+      }
+      
+      // Cleanup localStorage when the user disconnects
+      const handleBeforeUnload = () => {
+          clearLocalStorage();
+      };
+      
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      // Cleanup the event listener when the component unmounts
+      return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+  }, []);
 
   return (
     <div>
