@@ -13,6 +13,7 @@ const GuessSong = () => {
   const [allReady, setAllReady] = useState(false);
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
+  const array = [];
   const storedRoomKey = localStorage.getItem('roomKey');
 
   const searchSongs = async (searchTerm) => {
@@ -20,14 +21,14 @@ const GuessSong = () => {
       const response = await axios.get(`${API_URL}/search-song`, { params: { q: searchTerm } });
       const data = response.data;
 
-      setSongs(data.songs.data.splice(0, 10));
+      setSongs(data.songs.data.splice(0, 7));
     } catch (error) {
       console.error('Error fetching songs:', error);
     }
   };
 
   const reproduceSong = async (songName, songArtist, previewUrl) => {
-    setSelectedSong(`${songName} - ${songArtist}`);
+    setSelectedSong(`${songName}-${songArtist}`);
     try {
       if (currentAudio) {
         currentAudio.pause();
@@ -41,8 +42,12 @@ const GuessSong = () => {
     }
   };
 
-  const chooseSong = async () => {
+  const chooseSong = async (title) => {
     setConfirmed(true);
+    array.push({
+      player: title.split('-')[1],
+      song: title.split('-')[0]
+    });
     socket.emit('ready', { key: storedRoomKey, user: user.username });
   };
 
@@ -61,7 +66,7 @@ const GuessSong = () => {
     return (
       <div>
         <h1 className='font-bold text-white text-2xl mb-4 -mt-32 xs:mb-2'>Search for a Song</h1>
-        <h3 className='text-white'>Warning: to select the song, click on the song without audio or it will be revealed</h3>
+        <h3 className='text-white mb-2'>Warning: to select the song, click on the song without audio or it will be revealed</h3>
         <input
           type="text"
           placeholder="Search for a song"
@@ -94,11 +99,17 @@ const GuessSong = () => {
             </div>
           ))}
         </ul>
+        <div className='flex justify-center items-center w-full'>
+          <div className='w-3/4 flex items-center justify-center py-3 px-10 text-white text-lg font-bold'
+          >
+            Selected Song: {selectedSong ? selectedSong : 'None'}
+          </div>
+        </div>
         <button className='text-md mt-2 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
           hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
             transition-all duration-200 hover:scale-110'
-          onClick={() => chooseSong()}>
-          Choose selected song: {selectedSong ? selectedSong : 'None'}
+          onClick={() => chooseSong(selectedSong)}>
+          Choose selected song
         </button>
       </div>
     );
@@ -116,9 +127,15 @@ const GuessSong = () => {
     return (
       <>
         <div className='text-white text-xl font-bold'>Game Started!</div>
+        {array.map((element, index) => (
+          <div key={index} className=''>
+            <div className='text-white text-lg'>User: {element.player}</div>
+            <div className='text-white text-lg'>Song: {element.song}</div>
+          </div>
+        ))}
       </>
     )
   }
 };
 
-export default GuessSong;
+export default GuessSong;   

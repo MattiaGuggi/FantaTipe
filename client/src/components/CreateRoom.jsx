@@ -81,20 +81,20 @@ const CreateRoom = () => {
     };
 
     fetchGames();
-}, []);
+  }, []);
 
   return (
-    <div>
+    <div className='flex flex-col justify-center items-center'>
         <h2 className='text-white font-bold text-2xl mb-12'>Create a Private Room</h2>
-        <input required
-            type="text"
-            placeholder="Your Room's Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-              placeholder-gray-400 transition duration-200'
-        />
-        <div>
+        <div className='w-1/2'>
+          <input required
+              type="text"
+              placeholder="Your Room's Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className='w-full pl-4 pr-10 py-3 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
+                placeholder-gray-400 transition duration-200'
+          />
           <input required
               type="number"
               placeholder="Min members"
@@ -102,7 +102,7 @@ const CreateRoom = () => {
               value={min}
               onChange={(e) => setMin(e.target.value)}
               style={{ appearance: 'none' }}
-              className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
+              className='w-full pl-4 pr-10 py-3 mt-4 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
                 placeholder-gray-400 transition duration-200'
           />
           <input required
@@ -112,7 +112,7 @@ const CreateRoom = () => {
               value={max}
               onChange={(e) => setMax(e.target.value)}
               style={{ appearance: 'none' }}
-              className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
+              className='w-full pl-4 pr-10 py-3 mt-4 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
                 placeholder-gray-400 transition duration-200'
           />
         </div>
@@ -134,8 +134,8 @@ const CreateRoom = () => {
                 <div className="text-red-600 font-bold">No games found</div>
             )}
         </div>
-        <div className='flex justify-center items-center'>
-          <div className='w-1/3 flex items-center justify-center py-5 px-10 text-white text-lg font-bold'
+        <div className='flex justify-center items-center w-full'>
+          <div className='w-1/3 flex items-center justify-center py-3 px-10 text-white text-lg font-bold'
           >
             Game selected: {game}
           </div>
