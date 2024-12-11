@@ -7,13 +7,13 @@ const GuessSong = () => {
   const { user } = useUser();
   const [query, setQuery] = useState('');
   const [songs, setSongs] = useState([]);
+  const [array, setArray] = useState([]);
   const [selectedSong, setSelectedSong] = useState('');
   const [currentAudio, setCurrentAudio] = useState(null);
   const [confirmed, setConfirmed] = useState(false);
   const [allReady, setAllReady] = useState(false);
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
-  const array = [];
   const storedRoomKey = localStorage.getItem('roomKey');
 
   const searchSongs = async (searchTerm) => {
@@ -44,10 +44,14 @@ const GuessSong = () => {
 
   const chooseSong = async (title) => {
     setConfirmed(true);
-    array.push({
-      player: title.split('-')[1],
-      song: title.split('-')[0]
-    });
+    setArray((prevArray) => [
+      ...prevArray,
+      {
+        player: title.split('-')[1],
+        song: title.split('-')[0],
+        audio: currentAudio
+      },
+    ]);
     socket.emit('ready', { key: storedRoomKey, user: user.username });
   };
 
@@ -131,6 +135,7 @@ const GuessSong = () => {
           <div key={index} className=''>
             <div className='text-white text-lg'>User: {element.player}</div>
             <div className='text-white text-lg'>Song: {element.song}</div>
+            {element.audio.pause()}
           </div>
         ))}
       </>
