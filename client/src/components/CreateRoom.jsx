@@ -6,7 +6,6 @@ import { useUser } from '../assets/UserContext';
 
 const CreateRoom = () => {
   const { user } = useUser(); // Destructure setUser from useUser
-  const [creator, setCreator] = useState('');
   const [min, setMin] = useState('');
   const [max, setMax] = useState('');
   const [name, setName] = useState('');
@@ -44,17 +43,16 @@ const CreateRoom = () => {
   };
 
   const createRoom = async () => {
-    setCreator(user.username);
     try {
         if (inputControls()) return;
 
-        const response = await axios.post(`${API_URL}/create-room`, { creator, name, min, max, game });
+        const response = await axios.post(`${API_URL}/create-room`, { creator: user.username, name, min, max, game });
         const data = response.data;
 
         if (data.success) {
           // Store the room key and participant name in localStorage
           localStorage.setItem("roomKey", data.roomKey);
-          localStorage.setItem("participant", creator);
+          localStorage.setItem("participant", user.username);
           navigate(`/${data.roomKey}`);
         }
         else {
