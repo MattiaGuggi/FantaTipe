@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -6,12 +7,18 @@ import { useUser } from '../assets/UserContext';
 const GuessSong = () => {
   const { user } = useUser();
   const [query, setQuery] = useState('');
+  const [selectedSong, setSelectedSong] = useState('');
+  const [guessedSong, setGuessedSong] = useState('');
+  const [round, setRound] = useState(0);
   const [songs, setSongs] = useState([]);
   const [array, setArray] = useState([]);
-  const [selectedSong, setSelectedSong] = useState('');
   const [currentAudio, setCurrentAudio] = useState(null);
   const [confirmed, setConfirmed] = useState(false);
   const [allReady, setAllReady] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [timer, setTimer] = useState(30);
+  const [endGame, setEndGame] = useState(false); // Added endGame state
+
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
   const storedRoomKey = localStorage.getItem('roomKey');
@@ -20,7 +27,6 @@ const GuessSong = () => {
     try {
       const response = await axios.get(`${API_URL}/search-song`, { params: { q: searchTerm } });
       const data = response.data;
-
       setSongs(data.songs.data.splice(0, 7));
     } catch (error) {
       console.error('Error fetching songs:', error);
@@ -33,7 +39,6 @@ const GuessSong = () => {
       if (currentAudio) {
         currentAudio.pause();
       }
-
       const audio = new Audio(previewUrl);
       audio.play();
       setCurrentAudio(audio);
@@ -49,10 +54,72 @@ const GuessSong = () => {
       {
         player: title.split('-')[1],
         song: title.split('-')[0],
-        audio: currentAudio
+        audio: currentAudio,
       },
     ]);
     socket.emit('ready', { key: storedRoomKey, user: user.username });
+  };
+
+  const shuffle = (array) => {
+    const shuffled = array.slice();
+    for (let i = 0; i < shuffled.length - 1; i++) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const playRoundSong = () => {
+    // Stop any currently playing audio
+    if (currentAudio) {
+      currentAudio.pause();
+    }
+  
+    // Get the audio preview URL of the current round's song
+    const currentSong = array[round];
+    if (currentSong && currentSong.audio) {
+      currentSong.audio.currentTime = 0; // Restart the song from the beginning
+      currentSong.audio.play();
+      setCurrentAudio(currentSong.audio);
+    }
+  };
+
+  const startRound = () => {
+    // Check if the round exceeds or matches the number of songs
+    if (round >= array.length) {
+      setIsRevealed(true);
+      setEndGame(true); // Set endGame to true when the game finishes
+      return;
+    }
+
+    setIsRevealed(false);
+    setTimer(30);
+    playRoundSong();
+
+    const countdown = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdown);
+          setIsRevealed(true);
+
+          setTimeout(() => {
+            setRound((prevRound) => prevRound + 1);
+
+            if (round + 1 < array.length) {
+              startRound();
+            }
+            else {
+              setEndGame(true); // Set endGame to true when the game finishes
+            }
+
+            setIsRevealed(false);
+          }, 5000);
+
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -65,7 +132,13 @@ const GuessSong = () => {
     });
   }, [socket]);
 
-  // First step: choose a song
+  useEffect(() => {
+    if (allReady) {
+      setArray(shuffle(array));
+      startRound();
+    }
+  }, [allReady]);
+
   if (!confirmed) {
     return (
       <div>
@@ -75,14 +148,12 @@ const GuessSong = () => {
           type="text"
           placeholder="Search for a song"
           value={query}
-          className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-            placeholder-gray-400 transition duration-200 xs:w-5/6'
+          className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700 placeholder-gray-400 transition duration-200 xs:w-5/6'
           onChange={(e) => {
             setQuery(e.target.value);
             if (e.target.value) {
               searchSongs(e.target.value);
-            }
-            else {
+            } else {
               setSongs([]);
             }
           }}
@@ -90,57 +161,61 @@ const GuessSong = () => {
         <ul className='m-4'>
           {songs.map((song, index) => (
             <div key={index}>
-              <li key={song.id} onClick={() => reproduceSong(song.title, song.artist.name, song.preview)}
-                className={`relative cursor-pointer py-3 px-2 border transition-all duration-300 transform
-                  ${index === 0 ? 'rounded-tl-[15px] rounded-tr-[15px]' : ''} 
-                  ${index === songs.length - 1 ? 'rounded-bl-[15px] rounded-br-[15px]' : ''} `}
+              <li
+                key={song.id}
+                onClick={() => reproduceSong(song.title, song.artist.name, song.preview)}
+                className={`relative cursor-pointer py-3 px-2 border transition-all duration-300 transform ${
+                  index === 0 ? 'rounded-tl-[15px] rounded-tr-[15px]' : ''
+                } ${index === songs.length - 1 ? 'rounded-bl-[15px] rounded-br-[15px]' : ''}`}
               >
-                <div className={`absolute inset-0 bg-black bg-opacity-50 opacity-0 transition-all duration-300 hover:opacity-60 
-                  ${index === 0 ? 'rounded-tl-[15px] rounded-tr-[15px]' : ''} 
-                  ${index === songs.length - 1 ? 'rounded-bl-[15px] rounded-br-[15px]' : ''} `}></div>
+                <div className={`absolute inset-0 bg-black bg-opacity-50 opacity-0 transition-all duration-300 hover:opacity-60 ${
+                  index === 0 ? 'rounded-tl-[15px] rounded-tr-[15px]' : ''
+                } ${index === songs.length - 1 ? 'rounded-bl-[15px] rounded-br-[15px]' : ''}`}></div>
                 {song.title} - {song.artist.name}
               </li>
             </div>
           ))}
         </ul>
         <div className='flex justify-center items-center w-full'>
-          <div className='w-3/4 flex items-center justify-center py-3 px-10 text-white text-lg font-bold'
-          >
-            Selected Song: {selectedSong ? selectedSong : 'None'}
+          <div className='w-3/4 flex items-center justify-center py-3 px-10 text-white text-lg font-bold'>
+            Selected Song: {selectedSong || 'None'}
           </div>
         </div>
-        <button className='text-md mt-2 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
-          hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-            transition-all duration-200 hover:scale-110'
-          onClick={() => chooseSong(selectedSong)}>
+        <button
+          className='text-md mt-2 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 transition-all duration-200 hover:scale-110'
+          onClick={() => chooseSong(selectedSong)}
+        >
           Choose selected song
         </button>
       </div>
     );
   }
-  // Second step: wait for all players
   else if (!allReady) {
-    return (
-      <>
-        <h2 className='text-white text-2xl'>Waiting for other players...</h2>
-      </>
-    );
+    return <h2 className='text-white text-2xl'>Waiting for other players...</h2>;
   }
-  // Third step: game logic
   else {
     return (
       <>
-        <div className='text-white text-xl font-bold'>Game Started!</div>
-        {array.map((element, index) => (
-          <div key={index} className=''>
-            <div className='text-white text-lg'>User: {element.player}</div>
-            <div className='text-white text-lg'>Song: {element.song}</div>
-            {element.audio.pause()}
+        <h2 className='text-white font-bold text-5xl'>Guess the song!</h2>
+        <h3 className='text-white text-2xl mb-2'>
+          {endGame ? 'Game Finished!' : `Time left: ${timer}s`}
+        </h3>
+        <input
+          type="text"
+          value={guessedSong}
+          placeholder="Guess the song!"
+          className='w-1/4 pl-4 m-12 pr-10 py-2 bg-opacity-50 text-black rounded-lg border'
+          onChange={(e) => setGuessedSong(e.target.value)}
+        />
+        {isRevealed && (
+          <div className='text-white mt-4'>
+            {array[round]?.song.toLowerCase() === guessedSong.toLowerCase() ? 'Correct!' : 'Wrong!'}
+            <p>Correct Answer: {array[round]?.song}</p>
           </div>
-        ))}
+        )}
       </>
-    )
+    );
   }
 };
 
-export default GuessSong;   
+export default GuessSong;
