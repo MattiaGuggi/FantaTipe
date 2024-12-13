@@ -79,7 +79,7 @@ const GuessSong = () => {
     if (currentSong && currentSong.audio) {
       currentSong.audio.currentTime = 0; // Restart the song from the beginning
       setCurrentAudio(currentSong.audio);
-      new Audio(currentAudio).play();
+      currentAudio.play();
     }
   };
 

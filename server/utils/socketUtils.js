@@ -2,7 +2,7 @@ import { Room } from '../models/room.model.js';
 
 export const initSocket = (io) => {
     const roomReadiness = {}; // Track readiness per room
-    let array = [];
+    let array = {}; // Track songs in every room
 
     io.on('connection', (socket) => {
         console.log(`Client connected: ${socket.id}`);
@@ -58,12 +58,14 @@ export const initSocket = (io) => {
             const key = data.key;
             const user = data.user;
 
-            array.push(...data.array);
+            if (!array[key]) {
+                array[key] = [];
+            }
+            array[key].push(data.array[0]);
 
             if (!roomReadiness[key]) {
                 roomReadiness[key] = new Set();
             }
-
             roomReadiness[key].add(user);
 
             try {
@@ -73,7 +75,7 @@ export const initSocket = (io) => {
 
                     // The stored players must be the same as the participants + the creator
                     if (roomReadiness[key].size === totalParticipants + 1) {
-                        io.emit('allReady', { key: key, array: array });
+                        io.emit('allReady', { key: key, array: array[key] });
                     }
                 }
             } catch (err) {
@@ -103,6 +105,9 @@ export const initSocket = (io) => {
             console.log(`Client disconnected: ${socket.id}`);
             for (const key in roomReadiness) {
                 roomReadiness[key].delete(socket.id);
+            }
+            for (const key in array) {
+                array[key] = array[key].filter(item => item !== socket.id);
             }
         });
     });
