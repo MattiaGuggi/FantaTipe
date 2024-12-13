@@ -30,6 +30,7 @@ const GuessSong = () => {
       setSongs(data.songs.data.splice(0, 7));
     } catch (error) {
       console.error('Error fetching songs:', error);
+      alert('Failed to fetch songs. Please try again.');
     }
   };
 
@@ -49,15 +50,13 @@ const GuessSong = () => {
 
   const chooseSong = async (title) => {
     setConfirmed(true);
-    setArray((prevArray) => [
-      ...prevArray,
-      {
-        player: title.split('-')[1],
-        song: title.split('-')[0],
-        audio: currentAudio,
-      },
-    ]);
-    socket.emit('ready', { key: storedRoomKey, user: user.username });
+    currentAudio.pause();
+    let temp = [{
+      player: title.split('-')[1],
+      song: title.split('-')[0],
+      audio: currentAudio,
+    }];
+    socket.emit('ready', { key: storedRoomKey, user: user.username, array: temp });
   };
 
   const shuffle = (array) => {
@@ -79,8 +78,8 @@ const GuessSong = () => {
     const currentSong = array[round];
     if (currentSong && currentSong.audio) {
       currentSong.audio.currentTime = 0; // Restart the song from the beginning
-      currentSong.audio.play();
       setCurrentAudio(currentSong.audio);
+      new Audio(currentAudio).play();
     }
   };
 
@@ -103,7 +102,16 @@ const GuessSong = () => {
           setIsRevealed(true);
 
           setTimeout(() => {
-            setRound((prevRound) => prevRound + 1);
+            setRound((prevRound) => {
+              const newRound = prevRound + 1;
+              if (newRound < array.length) {
+                startRound();
+              }
+              else {
+                setEndGame(true);
+              }
+              return newRound;
+            });
 
             // Check if the game needs to continue or not (all songs been reproduced)
             if (round + 1 < array.length) {
@@ -124,12 +132,10 @@ const GuessSong = () => {
   };
 
   useEffect(() => {
-    socket.on('allReady', () => {
+    socket.on('allReady', (data) => {
       setAllReady(true);
-    });
-    socket.on('notReady', (data) => {
-      const len = data.ready;
-      console.log(len);
+      console.log('Final array: ', data.array);
+      setArray(data.array);
     });
   }, [socket]);
 
@@ -139,6 +145,10 @@ const GuessSong = () => {
       startRound();
     }
   }, [allReady]);
+
+  useEffect(() => {
+    return () => socket.disconnect(); // Cleanup on component unmount
+  }, []);
 
   if (!confirmed) {
     return (
@@ -154,7 +164,8 @@ const GuessSong = () => {
             setQuery(e.target.value);
             if (e.target.value) {
               searchSongs(e.target.value);
-            } else {
+            }
+            else {
               setSongs([]);
             }
           }}
