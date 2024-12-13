@@ -105,11 +105,12 @@ const GuessSong = () => {
           setTimeout(() => {
             setRound((prevRound) => prevRound + 1);
 
+            // Check if the game needs to continue or not (all songs been reproduced)
             if (round + 1 < array.length) {
               startRound();
             }
             else {
-              setEndGame(true); // Set endGame to true when the game finishes
+              setEndGame(true);
             }
 
             setIsRevealed(false);

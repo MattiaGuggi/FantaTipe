@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -34,18 +35,22 @@ const Games = ({ isGameStarted, setIsGameStarted }) => {
       navigate("/create-room");
     }
     else if (status === "join") {
-        // Check if the user has a stored room key and participant name
+        if (user.username === storedParticipant) {
+            // If the game is not started yet, then go to the room
+            // The room's status has been checked when the component was mounted
+            alert('You are redirected to your previous room');
+            navigate(`/${storedRoomKey}`);
+        }
+        else if (roomStatus === "active") {
+            alert("This room is already active. You cannot join an active game.");
+            return;
+        }
 
+        // Check if the user has a stored room key and participant name
         if (!isGameStarted) {
             // If no key, then go and put one
             if (!storedRoomKey) {
                 navigate("/join-room");
-            }
-            // If previous user is the same
-            else if (user.username === storedParticipant) {
-                // If the game is not started yet, then go to the room
-                // The room's status has been checked when the component was mounted
-                navigate(`/${storedRoomKey}`);
             }
             // If different user logged in now
             else {
@@ -59,46 +64,46 @@ const Games = ({ isGameStarted, setIsGameStarted }) => {
     }
   };
 
-  // Instantly checks if the game of the room he has the key is started or not
-  useEffect(() => {
-    const getRoomStatus = async (key) => {
-        try {
-            if (!key) return;
-            const response = await axios.post(`${API_URL}/${key}`);
-            const data = response.data;
-    
-            if (data.success) {
-                setRoomStatus(data.room.status);
+    // Instantly checks if the game of the room he has the key is started or not
+    useEffect(() => {
+        const getRoomStatus = async (key) => {
+            try {
+                if (!key) return;
+                const response = await axios.post(`${API_URL}/${key}`);
+                const data = response.data;
+        
+                if (data.success) {
+                    setRoomStatus(data.room.status);
+                }
+            } catch (err) {
+                console.error('Error getting room status:', err);
             }
-        } catch (err) {
-            console.error('Error getting room status:', err);
-        }
-    };
-    const getRoom = async (key) => {
-        try {
-            if (!key) return;
-            const response = await axios.post(`${API_URL}/${key}`);
-            const data = response.data;
-    
-            if (!data.success) {
-                setIsGameStarted(false);
+        };
+        const getRoom = async (key) => {
+            try {
+                if (!key) return;
+                const response = await axios.post(`${API_URL}/${key}`);
+                const data = response.data;
+        
+                if (!data.success) {
+                    setIsGameStarted(false);
+                }
+            } catch (err) {
+                console.error('Error getting room status:', err);
             }
-        } catch (err) {
-            console.error('Error getting room status:', err);
-        }
-    };
+        };
 
-    // Check if the room still exists
-    if (storedRoomKey && isGameStarted) {
-        getRoom(storedRoomKey);
-        getRoomDetails(storedRoomKey);
-    }
-    if (storedRoomKey && !isGameStarted) {
-        getRoomStatus(storedRoomKey);
-        if (roomStatus === 'active')
-            setIsGameStarted(true);
+        // Check if the room still exists
+        if (storedRoomKey && isGameStarted) {
+            getRoom(storedRoomKey);
+            getRoomDetails(storedRoomKey);
         }
-  });
+        if (storedRoomKey && !isGameStarted) {
+            getRoomStatus(storedRoomKey);
+            if (roomStatus === 'active')
+                setIsGameStarted(true);
+            }
+    }, []);
 
   // isGameStarted is automatically true only if he has the key in the session
 
