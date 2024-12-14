@@ -68,28 +68,25 @@ const GuessSong = () => {
     return shuffled;
   };
 
-  const playRoundSong = () => {
-    console.log('Playing song for round ', round);
-    // Stop any currently playing audio
+  const playRoundSong = (roundIndex = round) => {
+    console.log('Playing song for round ', roundIndex);
+    
     if (currentAudio?.audio) {
       currentAudio.audio.pause();
     }
   
-    // Get the audio preview URL of the current round's song
-    const currentSong = array[round];
+    const currentSong = array[roundIndex];
     if (currentSong?.url) {
-      if (currentAudio?.audio) {
-        currentAudio.audio.pause();
-      }
-
       const newAudio = new Audio(currentSong.url);
-      newAudio.currentTime = 0; // Restart the song from the beginning
+      newAudio.currentTime = 0;
       newAudio.play();
-      setCurrentAudio({ audio: newAudio, url: currentSong.url});
+      setCurrentAudio({ audio: newAudio, url: currentSong.url });
     }
   };
 
-  const startRound = () => {
+  const startRound = (currentRound) => {
+    setGuessedSong('');
+
     // Check if the round exceeds or matches the number of songs
     if (round >= array.length) {
       setIsRevealed(true);
@@ -99,7 +96,7 @@ const GuessSong = () => {
   
     setIsRevealed(false);
     setTimer(30);
-    playRoundSong();
+    playRoundSong(currentRound); // Play the song for the current round
   
     const countdown = setInterval(() => {
       setTimer((prev) => {
@@ -107,13 +104,15 @@ const GuessSong = () => {
           clearInterval(countdown);
           setIsRevealed(true);
   
+          // After 5 secs move to the next round
           setTimeout(() => {
             setRound((prevRound) => {
               const newRound = prevRound + 1;
               if (newRound < array.length) {
-                playRoundSong(); // Play the next song after the delay
+                startRound(newRound);
                 return newRound;
-              } else {
+              }
+              else {
                 setEndGame(true); // End the game if no more songs are left
                 return prevRound;
               }
@@ -137,7 +136,7 @@ const GuessSong = () => {
   useEffect(() => {
     if (allReady) {
       setArray(shuffle(array));
-      startRound();
+      startRound(0);
     }
   }, [allReady]);
 
