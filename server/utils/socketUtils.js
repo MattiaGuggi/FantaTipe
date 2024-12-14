@@ -54,6 +54,7 @@ export const initSocket = (io) => {
             }
         });
 
+        // Need to fix the song problem (always playing in background)
         socket.on('ready', async (data) => {
             const key = data.key;
             const user = data.user;

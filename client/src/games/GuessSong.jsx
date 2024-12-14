@@ -37,12 +37,12 @@ const GuessSong = () => {
   const reproduceSong = async (songName, songArtist, previewUrl) => {
     setSelectedSong(`${songName}-${songArtist}`);
     try {
-      if (currentAudio) {
-        currentAudio.pause();
+      if (currentAudio?.audio) {
+        currentAudio.audio.pause();
       }
       const audio = new Audio(previewUrl);
       audio.play();
-      setCurrentAudio(audio);
+      setCurrentAudio({audio: audio, url: previewUrl});
     } catch (err) {
       console.error('Error reproducing song', err);
     }
@@ -50,11 +50,11 @@ const GuessSong = () => {
 
   const chooseSong = async (title) => {
     setConfirmed(true);
-    currentAudio.pause();
+    currentAudio.audio.pause();
     let temp = [{
       player: title.split('-')[1],
       song: title.split('-')[0],
-      audio: currentAudio,
+      url: currentAudio.url,
     }];
     socket.emit('ready', { key: storedRoomKey, user: user.username, array: temp });
   };
@@ -69,17 +69,23 @@ const GuessSong = () => {
   };
 
   const playRoundSong = () => {
+    console.log('Playing song for round ', round);
     // Stop any currently playing audio
-    if (currentAudio) {
-      currentAudio.pause();
+    if (currentAudio?.audio) {
+      currentAudio.audio.pause();
     }
   
     // Get the audio preview URL of the current round's song
     const currentSong = array[round];
-    if (currentSong && currentSong.audio) {
-      currentSong.audio.currentTime = 0; // Restart the song from the beginning
-      setCurrentAudio(currentSong.audio);
-      currentAudio.play();
+    if (currentSong?.url) {
+      if (currentAudio?.audio) {
+        currentAudio.audio.pause();
+      }
+
+      const newAudio = new Audio(currentSong.url);
+      newAudio.currentTime = 0; // Restart the song from the beginning
+      newAudio.play();
+      setCurrentAudio({ audio: newAudio, url: currentSong.url});
     }
   };
 
@@ -90,51 +96,40 @@ const GuessSong = () => {
       setEndGame(true); // Set endGame to true when the game finishes
       return;
     }
-
+  
     setIsRevealed(false);
     setTimer(30);
     playRoundSong();
-
+  
     const countdown = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
           clearInterval(countdown);
           setIsRevealed(true);
-
+  
           setTimeout(() => {
             setRound((prevRound) => {
               const newRound = prevRound + 1;
               if (newRound < array.length) {
-                startRound();
+                playRoundSong(); // Play the next song after the delay
+                return newRound;
+              } else {
+                setEndGame(true); // End the game if no more songs are left
+                return prevRound;
               }
-              else {
-                setEndGame(true);
-              }
-              return newRound;
             });
-
-            // Check if the game needs to continue or not (all songs been reproduced)
-            if (round + 1 < array.length) {
-              startRound();
-            }
-            else {
-              setEndGame(true);
-            }
-
-            setIsRevealed(false);
           }, 5000);
-
+  
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-  };
+  };  
 
   useEffect(() => {
     socket.on('allReady', (data) => {
       setAllReady(true);
-      console.log('Final array: ', data.array);
       setArray(data.array);
     });
   }, [socket]);
@@ -145,10 +140,6 @@ const GuessSong = () => {
       startRound();
     }
   }, [allReady]);
-
-  useEffect(() => {
-    return () => socket.disconnect(); // Cleanup on component unmount
-  }, []);
 
   if (!confirmed) {
     return (
