@@ -358,3 +358,20 @@ export const searchSong = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+export const topProfiles = async (req, res) => {
+    const { q } = req.query;
+
+    try {
+        const users = await getUsersFromDB();
+        const numUsers = Math.min(users.length, parseInt(q, 10) || 0);
+
+        // Shuffle the users array and get the first `numUsers` elements
+        const shuffledUsers = users.sort(() => 0.5 - Math.random()).slice(0, numUsers);
+
+        res.status(200).json({ success: true, users: shuffledUsers });
+    } catch (err) {
+        console.error('Error getting top profiles', err);
+        res.status(500).json({ error: 'Error getting top profiles' });
+    }
+};

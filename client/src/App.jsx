@@ -15,7 +15,7 @@ import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import Games from './components/Games';
-import Demo from './games/Demo';
+import Showdown from './games/Showdown';
 import GuessWho from './games/GuessWho';
 import GuessSong from './games/GuessSong';
 import TreasureHunt from './games/TreasureHunt';
@@ -70,7 +70,7 @@ function App() {
                 <Route path="/profile/:username" element={<Users />} />
                 <Route path="/treasure-hunt" element={<TreasureHunt />} />
                 <Route path="/guess-song" element={<GuessSong />} />
-                <Route path="/demo" element={<Demo />} />
+                <Route path="/showdown" element={<Showdown />} />
                 <Route path="/guess-who" element={<GuessWho />} />
                 <Route path="/hot-game" element={<HotGame />} />
                 <Route path="/create-room" element={<CreateRoom />} />

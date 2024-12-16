@@ -19,7 +19,8 @@ import {
     createRoom,
     joinRoom,
     fetchRoomDetails,
-    searchSong
+    searchSong,
+    topProfiles
 } from '../controller/authController.js';
 
 const authRoutes = (io) => {
@@ -42,6 +43,7 @@ const authRoutes = (io) => {
     router.get('/leaderboard', (req, res) => leaderboard(req, res));
     router.get('/games', (req, res) => getGames(req, res));
     router.get('/search-song', (req, res) => searchSong(req, res));
+    router.get('/top-profiles', (req, res) => topProfiles(req, res));
     router.post('/create-room', (req, res) => createRoom(req, res));
     router.post('/join-room', (req, res) => joinRoom(req, res));
     router.post('/:key', (req, res) => fetchRoomDetails(req, res));
