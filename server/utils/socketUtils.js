@@ -101,6 +101,28 @@ export const initSocket = (io) => {
             }
         });
 
+        socket.on('chosen', async (data) => {
+            const { link, key, user } = data;
+
+            if (!roomReadiness[key]) {
+                roomReadiness[key] = new Set();
+            }
+            roomReadiness[key].add(user);
+          
+            try {
+              const room = await Room.findOne({ key });
+              if (room) {
+                const totalParticipants = room.participants.length;
+          
+                if (roomReadiness[key].size === totalParticipants + 1) {
+                  io.emit('chosen', { key: key, link: link, user: user.username });
+                }
+              }
+            } catch (err) {
+              console.error('Error getting chosen image', err);
+            }
+        });          
+
         // Handle disconnection
         socket.on('disconnect', () => {
             console.log(`Client disconnected: ${socket.id}`);
