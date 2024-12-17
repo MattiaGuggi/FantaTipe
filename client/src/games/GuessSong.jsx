@@ -17,7 +17,7 @@ const GuessSong = () => {
   const [allReady, setAllReady] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [timer, setTimer] = useState(30);
-  const [endGame, setEndGame] = useState(false); // Added endGame state
+  const [endGame, setEndGame] = useState(false);
 
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);

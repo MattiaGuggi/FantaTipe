@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useUser } from "../assets/UserContext";
 import axios from 'axios';
@@ -6,41 +7,65 @@ import { io } from "socket.io-client";
 const Showdown = () => {
   const { user } = useUser();
   const [round, setRound] = useState(1);
-  const [isGameStarted, setIsGameStarted] = useState(false);
   const [inputRounds, setInputRounds] = useState(64);
   const [images, setImages] = useState([]);
+  const [winningImage, setWinningImage] = useState(0);
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [endGame, setEndGame] = useState(false);
   const storedRoomKey = localStorage.getItem('roomKey');
 
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
+  let array = [];
 
   const startGame = async () => {
     setIsGameStarted(true);
     try {
       const response = await axios.get(`${API_URL}/top-profiles`, { params: { q: inputRounds } });
       const data = response.data;
-      let array = [];
 
       for (let user of data.users) {
-        array.push(user.pfp);
+        array.push({
+          pfp: user.pfp,
+          user: user.username,
+          points: user.points
+        });
       }
 
-      setImages(array);
+      if (array.length > 0) {
+        setImages(array.map(item => item.pfp));
+      }
     } catch (err) {
       console.error('Error getting the fetched images', err);
     }
   };
 
   const goNext = (data) => {
-    // Need to check if both put correct answer, if not one wins
-    setImages((prevImages) => prevImages.slice(2));
-    setRound((prevRound) => prevRound++);
-  };
+    if (data === winningImage) {
+      setImages((prevImages) => prevImages.slice(2));
+      setRound((prevRound) => prevRound + 1);
+    }
+    else {
+      setEndGame(true);
+    }
+  };  
+
+  // Loads everytime images array gets sliced to calculate which one is the winner for this round
+  useEffect(() => {
+    if (array.length >= 2) {
+      if (array[0].points > array[1].points) {
+        setWinningImage(array[0].pfp);
+      }
+      else {
+        setWinningImage(array[1].pfp);
+      }
+    }
+  }, [images]);
 
   useEffect(() => {
-    socket.on('chosen', (data) => {
-      console.log(data);
-      goNext(data.link);
+    socket.on('allReady', (data) => {
+      // Here I have the other users's choices
+      goNext(data.array[0]);
     });
   }, [socket]);
 
@@ -63,30 +88,33 @@ const Showdown = () => {
       </>
     );
   }
-  else if (images.length < 2) {
-    return (
-      <h2 className='text-white font-bold text-5xl mt-8'>Game Over!</h2>
-    );
-  }
   else {
     return (
       <>
         <h2 className='text-white font-bold text-5xl'>Showdown battle!</h2>
-        <h2 className='text-white font-bold text-3xl'>Round {round} of {inputRounds}</h2>
-        <div className='flex items-center justify-center rounded-lg gap-12 mt-8'>
-        <img
-          className='cursor-pointer rounded-full w-48 h-48'
-          src={images[0]}
-          alt='Left'
-          onClick={() => socket.emit('chosen', { key: storedRoomKey, link: images[0], user: user.username })}
-        />
-        <img
-          className='cursor-pointer rounded-full w-48 h-48'
-          src={images[1]}
-          alt='Right'
-          onClick={() => socket.emit('chosen', { key: storedRoomKey, link: images[1], user: user.username })}
-        />
-        </div>
+          {!endGame ? (
+            <>
+              <h2 className='text-white font-bold text-3xl'>Round {round} of {inputRounds}</h2>
+              <div className='flex items-center justify-center rounded-lg gap-12 mt-8'>
+                <img
+                  className='cursor-pointer rounded-full w-48 h-48'
+                  src={images[0]}
+                  alt='Left'
+                  onClick={() => socket.emit('ready', { key: storedRoomKey, user: user.username, array: [images[0]] })}
+                />
+                <img
+                  className='cursor-pointer rounded-full w-48 h-48'
+                  src={images[1]}
+                  alt='Right'
+                  onClick={() => socket.emit('ready', { key: storedRoomKey, user: user.username, array: [images[0]] })}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className='text-white text-3xl font-bold mt-4'>Game Over!</h2>
+            </>
+          )}
       </>
     );
   }
