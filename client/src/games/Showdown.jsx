@@ -35,6 +35,12 @@ const Showdown = () => {
       if (array.length > 0) {
         setImages(array.map(item => item.pfp));
       }
+      if (array[0].points > array[1].points) {
+        setWinningImage(array[0].pfp);
+      }
+      else {
+        setWinningImage(array[1].pfp);
+      }
     } catch (err) {
       console.error('Error getting the fetched images', err);
     }
@@ -42,13 +48,15 @@ const Showdown = () => {
 
   const goNext = (data) => {
     if (data === winningImage) {
-      setImages((prevImages) => prevImages.slice(2));
+      console.log('Correct');
       setRound((prevRound) => prevRound + 1);
+      setImages((prevImages) => prevImages.slice(2));
     }
     else {
+      console.log('Incorrect');
       setEndGame(true);
     }
-  };  
+  };
 
   // Loads everytime images array gets sliced to calculate which one is the winner for this round
   useEffect(() => {
@@ -63,10 +71,15 @@ const Showdown = () => {
   }, [images]);
 
   useEffect(() => {
-    socket.on('allReady', (data) => {
-      // Here I have the other users's choices
-      goNext(data.array[0]);
-    });
+    const handleChosen = (data) => {
+      goNext(data.pfp[0]);
+    };
+  
+    socket.on('chosen', handleChosen);
+
+    return () => {
+      socket.off('chosen', handleChosen);
+    };
   }, [socket]);
 
   if (!isGameStarted) {
@@ -100,13 +113,13 @@ const Showdown = () => {
                   className='cursor-pointer rounded-full w-48 h-48'
                   src={images[0]}
                   alt='Left'
-                  onClick={() => socket.emit('ready', { key: storedRoomKey, user: user.username, array: [images[0]] })}
+                  onClick={() => socket.emit('chosen', { key: storedRoomKey, user: user.username, pfp: images[0] })}
                 />
                 <img
                   className='cursor-pointer rounded-full w-48 h-48'
                   src={images[1]}
                   alt='Right'
-                  onClick={() => socket.emit('ready', { key: storedRoomKey, user: user.username, array: [images[0]] })}
+                  onClick={() => socket.emit('chosen', { key: storedRoomKey, user: user.username, pfp: images[1] })}
                 />
               </div>
             </>

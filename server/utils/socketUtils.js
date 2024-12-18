@@ -2,7 +2,8 @@ import { Room } from '../models/room.model.js';
 
 export const initSocket = (io) => {
     const roomReadiness = {}; // Track readiness per room
-    let array = {}; // Track songs in every room
+    let array = {}; // Track songs in every Guess Song room
+    let secondArray = {}; // Track chosen image in every room Showdown
 
     io.on('connection', (socket) => {
         console.log(`Client connected: ${socket.id}`);
@@ -85,13 +86,11 @@ export const initSocket = (io) => {
         });
 
         socket.on('startGame', async (data) => {
-            console.log('Game started');
             const key = data.key;
 
             try {
                 const room = await Room.findOne({ key });
                 if (room) {
-                    console.log(`Room ${key}'s status updated to active.`);
                     room.status = 'active';
                     await room.save();
                     io.emit('startGame');
@@ -99,7 +98,36 @@ export const initSocket = (io) => {
             } catch (err) {
                 console.error(`Error deleting room ${key}:`, err);
             }
-        });         
+        });  
+        
+        socket.on('chosen', async (data) => {
+            const key = data.key;
+            const pfp = data.pfp;
+            const user = data.user;
+
+            if (!secondArray[key]) {
+                secondArray[key] = [];
+            }
+            secondArray[key].push(pfp);
+
+            if (!roomReadiness[key]) {
+                roomReadiness[key] = new Set();
+            }
+            roomReadiness[key].add(user);
+
+            try {
+                const room = await Room.findOne({ key });
+
+                if (room?.status == 'waiting') {
+                    room.status = 'active';
+                    await room.save();
+                }
+
+                io.emit('chosen', { pfp: secondArray[key] });
+            } catch (err) {
+                console.error('Error getting chosen image');
+            }
+        });
 
         // Handle disconnection
         socket.on('disconnect', () => {
