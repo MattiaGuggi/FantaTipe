@@ -13,7 +13,6 @@ const Showdown = () => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [endGame, setEndGame] = useState(false);
   const storedRoomKey = localStorage.getItem('roomKey');
-
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
   let array = [];
@@ -31,6 +30,9 @@ const Showdown = () => {
           points: user.points
         });
       }
+
+      // Re-set the number of rounds to the number of images it could find (maybe not yet enough users)
+      setInputRounds(array.length);
 
       if (array.length > 0) {
         setImages(array.map(item => item.pfp));
@@ -57,6 +59,11 @@ const Showdown = () => {
       setEndGame(true);
     }
   };
+
+  useEffect(() => {
+    if (round >= inputRounds)
+      setEndGame(true);
+  }, [round]);
 
   // Loads everytime images array gets sliced to calculate which one is the winner for this round
   useEffect(() => {

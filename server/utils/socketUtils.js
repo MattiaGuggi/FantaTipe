@@ -55,7 +55,6 @@ export const initSocket = (io) => {
             }
         });
 
-        // Need to fix the song problem (always playing in background)
         socket.on('ready', async (data) => {
             const key = data.key;
             const user = data.user;
@@ -126,6 +125,30 @@ export const initSocket = (io) => {
                 io.emit('chosen', { pfp: secondArray[key] });
             } catch (err) {
                 console.error('Error getting chosen image');
+            }
+        });
+
+        socket.on('winningImage', (data) => {
+            const image = data.url;
+
+            try {
+                io.emit('winningImage', { url: image });
+            } catch(err) {
+                console.error('Error sending winning image', err);
+            }
+        });
+
+        socket.on('clear', async (data) => {
+            const key = data.key;
+
+            try {
+                const room = await Room.findOne({ key });
+
+                if (room) {
+                    roomReadiness[key] = new Set(); // Clearing previous set by overriding a new one (empty)
+                }
+            } catch(err) {
+                console.error('Error clearing room readiness', err);
             }
         });
 
