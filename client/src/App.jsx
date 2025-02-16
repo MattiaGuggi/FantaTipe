@@ -63,7 +63,7 @@ function App() {
               <Navbar />
               <Routes>
                 <Route path="/home" element={<Home />} />
-                <Route path="/search" element={<Search className='fixed top-20 w-[450px] xs:w-64'/>} />
+                <Route path="/search" element={<Search className='fixed top-20 w-80 xs:w-64'/>} />
                 <Route path="/formation" element={<Formation />} />
                 <Route path="/games" element={<Games isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted}/>} />
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />

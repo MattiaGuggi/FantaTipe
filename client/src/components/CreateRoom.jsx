@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../assets/UserContext';
+import Input from '../assets/Input';
+import { ArrowUpAZ, ArrowUp10 } from 'lucide-react';
 
 const CreateRoom = () => {
   const { user } = useUser(); // Destructure setUser from useUser
@@ -85,33 +87,30 @@ const CreateRoom = () => {
     <div className='flex flex-col justify-center items-center'>
         <h2 className='text-white font-bold text-2xl mb-12'>Create a Private Room</h2>
         <div className='w-1/2'>
-          <input required
+          <Input
+              icon={ArrowUpAZ}
               type="text"
               placeholder="Your Room's Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='w-full pl-4 pr-10 py-3 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-                placeholder-gray-400 transition duration-200'
           />
-          <input required
+          <Input
+              icon={ArrowUp10}
               type="number"
               placeholder="Min members"
               min="0"
               value={min}
               onChange={(e) => setMin(e.target.value)}
               style={{ appearance: 'none' }}
-              className='w-full pl-4 pr-10 py-3 mt-4 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-                placeholder-gray-400 transition duration-200'
           />
-          <input required
+          <Input
+              icon={ArrowUp10}
               type="number"
               placeholder="Max members"
               min="0"
               value={max}
               onChange={(e) => setMax(e.target.value)}
               style={{ appearance: 'none' }}
-              className='w-full pl-4 pr-10 py-3 mt-4 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-                placeholder-gray-400 transition duration-200'
           />
         </div>
         <h2 className='text-white text-2xl font-bold m-4'>Choose a game:</h2>

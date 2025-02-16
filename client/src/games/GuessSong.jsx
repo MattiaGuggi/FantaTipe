@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useUser } from '../assets/UserContext';
+import Input from '../assets/Input';
+import { AudioLines, Search } from 'lucide-react'
 
 const GuessSong = () => {
   const { user } = useUser();
@@ -145,12 +147,11 @@ const GuessSong = () => {
       <div>
         <h1 className='font-bold text-white text-2xl mb-4 -mt-32 xs:mb-2'>Search for a Song</h1>
         <h3 className='text-white mb-2'>Warning: to select the song, click on the song without audio or it will be revealed</h3>
-        <input
+        <Input
+          icon={Search}
           type="text"
           placeholder="Search for a song"
-          value={query}
-          className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700 placeholder-gray-400 transition duration-200 xs:w-5/6'
-          onChange={(e) => {
+          value={query}onChange={(e) => {
             setQuery(e.target.value);
             if (e.target.value) {
               searchSongs(e.target.value);
@@ -202,11 +203,11 @@ const GuessSong = () => {
         <h3 className='text-white text-2xl mb-2'>
           {endGame ? 'Game Finished!' : `Time left: ${timer}s`}
         </h3>
-        <input
+        <Input
+          icon={AudioLines}
           type="text"
           value={guessedSong}
           placeholder="Guess the song!"
-          className='w-1/4 pl-4 m-12 pr-10 py-2 bg-opacity-50 text-black rounded-lg border'
           onChange={(e) => setGuessedSong(e.target.value)}
         />
         {isRevealed && (

@@ -22,7 +22,7 @@ const SearchResults = ({ results, mode, addToFormation }) => {
         <>
             <style>{`
                 .result::-webkit-scrollbar {
-                    width: 10px;
+                    width: 0px;
                 }
                 
                 .result::-webkit-scrollbar-thumb {
@@ -40,7 +40,7 @@ const SearchResults = ({ results, mode, addToFormation }) => {
                     results.map((result, idx) => {
                         return (
                             <div key={idx}>
-                                <p className='w-full text-white text-lg mt-1 cursor-pointer py-2 hover:bg-white hover:backdrop-filter hover:backdrop-blur-md hover:bg-opacity-10'
+                                <p className='w-full text-white text-lg cursor-pointer py-3 hover:bg-white hover:backdrop-filter hover:backdrop-blur-md hover:bg-opacity-10'
                                     onClick={() => handleResultClick(result)}
                                 >
                                     {result}

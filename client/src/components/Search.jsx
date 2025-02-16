@@ -8,9 +8,9 @@ const Search = ({ className, mode = 'search', addToFormation }) => {
   const [result, setResult] = useState([]);
 
   return (
-    <div className={`${className}`}>
-      <SearchBar setResult = {setResult} />
-      <SearchResults results = {result} mode={mode} addToFormation={addToFormation}/>
+    <div className={`search ${className}`}>
+      <SearchBar setResult={setResult} />
+      <SearchResults results={result} mode={mode} addToFormation={addToFormation}/>
     </div>
   )
 }

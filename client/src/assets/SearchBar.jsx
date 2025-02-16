@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { Search } from 'lucide-react';
+import Input from './Input';
 
 const SearchBar = ({ setResult }) => {
     const [input, setInput] = useState('');
@@ -42,10 +43,9 @@ const SearchBar = ({ setResult }) => {
     }
 
     return (
-        <div className='bg-[#2f3134] w-full rounded-lg h-[12] p-4 shadow-custom flex items-center xs:h-14'>
-            <FaSearch className='text-violet-500 cursor-pointer'/>
-            <input type="text" placeholder='Search for users' className='bg-transparent border-none outline-none text-xl ml-1
-            placeholder:text-gray-300 text-white w-full' onChange={(e) => handleChange(e.target.value)}/>
+        <div className='bg-[#2f3134] rounded-lg h-auto w-auto shadow-custom flex items-center xs:h-14'>
+            <Input icon={Search} styles={"bg-transparent border-none outline-none text-xl placeholder:text-gray-300 text-white font-medium text-base"}
+                type="text" placeholder='Search for users' onChange={(e) => handleChange(e.target.value)}/>
         </div>
     )
 }

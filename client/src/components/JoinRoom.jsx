@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
 import { io } from 'socket.io-client';
+import { ArrowUpAZ } from 'lucide-react'
+import Input from '../assets/Input';
 
 const JoinRoom = ({ setRoom }) => {
     const { user } = useUser();
@@ -80,13 +82,12 @@ const JoinRoom = ({ setRoom }) => {
   return (
     <div>
         <h2 className='text-white font-bold text-2xl mb-5'>Join a Private Room</h2>
-        <input required
+        <Input
+            icon={ArrowUpAZ}
             type="text"
             placeholder="Room Key"
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            className='w-full pl-4 pr-10 py-2 bg-opacity-50 text-black rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-                placeholder-gray-400 transition duration-200'
         />
         <button onClick={() => joinRoom()}
             className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg

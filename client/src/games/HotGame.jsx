@@ -4,6 +4,8 @@ import { io } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../assets/UserContext';
+import Input from '../assets/Input';
+import { ArrowUp10 } from 'lucide-react';
 
 const hotGame = () => {
   const { user } = useUser();
@@ -96,8 +98,8 @@ const hotGame = () => {
   if (!isGameStarted) {
     return (
       <>
-        <input
-          className='w-1/4 pl-4 m-12 pr-10 py-2 bg-opacity-50 text-black rounded-lg border'
+        <Input
+          icon={ArrowUp10}
           type='number'
           placeholder='Inserisci numero di round'
           value={inputRounds}
