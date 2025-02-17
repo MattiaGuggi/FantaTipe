@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../assets/UserContext';
 import Input from '../assets/Input';
 import { ArrowUpAZ, ArrowUp10 } from 'lucide-react';
+import CustomButton from '../assets/CustomButton';
 
 const CreateRoom = () => {
   const { user } = useUser(); // Destructure setUser from useUser
@@ -84,14 +85,15 @@ const CreateRoom = () => {
   }, []);
 
   return (
-    <div className='flex flex-col justify-center items-center'>
-        <h2 className='text-white font-bold text-2xl mb-12'>Create a Private Room</h2>
+    <div className='flex flex-col justify-center items-center mb-20'>
+        <h2 className='text-white font-bold text-2xl mb-4 mt-4'>Create a Private Room</h2>
         <div className='w-1/2'>
           <Input
               icon={ArrowUpAZ}
               type="text"
               placeholder="Your Room's Name"
               value={name}
+              margin={'mb-6'}
               onChange={(e) => setName(e.target.value)}
           />
           <Input
@@ -100,6 +102,7 @@ const CreateRoom = () => {
               placeholder="Min members"
               min="0"
               value={min}
+              margin={'mb-6'}
               onChange={(e) => setMin(e.target.value)}
               style={{ appearance: 'none' }}
           />
@@ -109,6 +112,7 @@ const CreateRoom = () => {
               placeholder="Max members"
               min="0"
               value={max}
+              margin={'mb-6'}
               onChange={(e) => setMax(e.target.value)}
               style={{ appearance: 'none' }}
           />
@@ -117,15 +121,12 @@ const CreateRoom = () => {
         <div className="flex flex-wrap justify-center">
             {games.length > 0 ? (
                 games.map((game, index) => (
-                  <div
+                  <CustomButton
                     key={index}
-                    className='flex items-center justify-center cursor-pointer py-5 px-10 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
-                    font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-                    focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
                     onClick={() => setGame(game)}
-                  >
-                      {game}
-                  </div>
+                    value={game}
+                    margin={'m-6'}
+                  />
                 ))
             ) : (
                 <div className="text-red-600 font-bold">No games found</div>
@@ -137,12 +138,8 @@ const CreateRoom = () => {
             Game selected: {game}
           </div>
         </div>
-        <button onClick={() => createRoom()} className='text-md mt-4 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
-            hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-            transition-all duration-200 hover:scale-110'
-        >
-            Create Room
-        </button>
+        <CustomButton onClick={createRoom} value={'Create Room'}
+        />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { useUser } from '../assets/UserContext';
 import { io } from 'socket.io-client';
 import { ArrowUpAZ } from 'lucide-react'
 import Input from '../assets/Input';
+import CustomButton from '../assets/CustomButton';
 
 const JoinRoom = ({ setRoom }) => {
     const { user } = useUser();
@@ -89,13 +90,8 @@ const JoinRoom = ({ setRoom }) => {
             value={key}
             onChange={(e) => setKey(e.target.value)}
         />
-        <button onClick={() => joinRoom()}
-            className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
-            hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-            transition-all duration-200 hover:scale-110'
-        >
-            Join Room
-        </button>
+        <CustomButton onClick={() => joinRoom()} value={'Join Room'} margin={'mt-10'}
+        />
     </div>
   );
 };

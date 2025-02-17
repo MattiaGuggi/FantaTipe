@@ -3,6 +3,7 @@
 import React from 'react';
 import { User, Lock, Mail } from "lucide-react";
 import Input from './Input';
+import CustomButton from './CustomButton';
 
 const Modal = ({ isOpen, onClose, user, handleSave }) => {
   if (!isOpen) return null;
@@ -85,14 +86,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
               onChange={openFiles}
               className='hidden'
             />
-            <button
-              onClick={handleFileButtonClick}
-              className='text-lg font-medium bg-gradient-to-r from-indigo-700 to-indigo-900 text-white rounded-xl shadow
-              hover:from-indigo-800 hover:to-indigo-950 min-h-12 h-auto flex flex-wrap break-words m-4 px-4 py-2
-              xs:text-base xs:w-auto xs:min-h-8 xs:font-normal xs:ml-0 xs:mr-0 xs:mt-2 xs:h-12 xs:text-center'
-            >
-              Change Image
-            </button>
+            <CustomButton onClick={handleFileButtonClick} value={'Change Image'} />
           </div>
         </div>
         <div className='flex justify-evenly w-full mt-10 gap-8 h-12 xs:h-10 xs:w-11/12 xs:mt-10'>

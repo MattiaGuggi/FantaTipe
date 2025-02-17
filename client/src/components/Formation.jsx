@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useUser } from '../assets/UserContext';
 import FormationModal from '../assets/FormationModal';
 import { Loader } from 'lucide-react';
+import CustomButton from '../assets/CustomButton';
 
 const Formation = () => {
   const { user, setUser } = useUser();
@@ -138,16 +139,9 @@ const Formation = () => {
           )}
         </div>
         <div className='relative mt-10 flex items-center justify-center '>
-          <button
-            className='flex cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
-              font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-            focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110
-            bg-white backdrop-filter backdrop-blur-md bg-opacity-10  text-base p-4 
-            hover:bg-indigo-500 hover:bg-opacity-10 xs:mt-0 xs:font-semibold sm:mb-14 md:mb-14'
-            onClick={modifyFormation}
-          >
-            Change Formation
-          </button>
+          <CustomButton
+            onClick={modifyFormation} value={'Change Formation'} margin={'w-auto'}
+          />
         </div>
         <FormationModal
           isOpen={isModalOpen}

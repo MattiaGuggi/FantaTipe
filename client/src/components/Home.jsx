@@ -6,6 +6,7 @@ import { useUser } from '../assets/UserContext';
 import Dashboard from './Dashboard';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from 'lucide-react';
+import CustomButton from '../assets/CustomButton';
 
 const Home = () => {
   const { user } = useUser();
@@ -62,15 +63,11 @@ const Home = () => {
           <Dashboard />
           <div className='flex justify-center items-center mt-10 w-full h-auto xs:mt-4'>
             <div className='updateButton'>
-              <button
+              <CustomButton
                 onClick={handleUpdatePoints}
-                className={`bg-gradient-to-r from-indigo-700 to-indigo-900 text-white px-4 py-2 rounded-xl text-lg font-medium w-40 h-16 mb-48
-                  hover:from-indigo-800 hover:to-indigo-950 shadow-custom  hover:scale-110 transition-all duration-200
-                  xs:w-40 xs:font-normal xs:mr-0 xs:mb-32`}
-                disabled={loading}
-              >
-                {loading ? <Loader className='size-6 animate-spin mx-auto' /> : 'Update Points'}
-              </button>
+                value={loading ? <Loader className='size-6 animate-spin mx-auto' /> : 'Update Points'}
+                margin={'mb-48'}
+              />
               {error && <p className="text-red-500">{error}</p>}
               {message && <p className="text-green-500">{message}</p>}
             </div>

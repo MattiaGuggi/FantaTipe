@@ -4,6 +4,7 @@ import { useUser } from '../assets/UserContext'; // Import useUser
 import Modal from '../assets/Modal';
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
+import CustomButton from '../assets/CustomButton';
 
 const Profile = ({ redirectToLogin }) => {
   const { user, setUser } = useUser(); // Destructure setUser from useUser
@@ -53,15 +54,7 @@ const Profile = ({ redirectToLogin }) => {
         <p className='text-white mt-6 mb-12'>{user.points} points</p>
         <img src={user.pfp} alt="Profile Picture" className='rounded-full w-52 h-52 xs:w-40 xs:h-40' />
         <div className='relative mt-10'>
-          <button
-            className='text-md mt-8 px-8 py-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg
-              hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2 focus:ring-offset-gray-900
-              transition duration-200 hover:scale-110 relative bg-white backdrop-filter backdrop-blur-md bg-opacity-10 text-base p-4
-            hover:bg-indigo-500 hover:bg-opacity-10 xs:mt-0 xs:font-semibold'
-            onClick={modifyProfile}
-          >
-            Modify Profile
-          </button>
+          <CustomButton onClick={modifyProfile} value={'Modify Profile'} />
         </div>
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} user={user|| { username: '', points: '', pfp: '', password: '' }} handleSave={handleSave} />
       </div>

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Lock } from "lucide-react";
 
-const Input = ({ icon: Icon, type: propsType, styles: Styles, ...props }) => {
+const Input = ({ icon: Icon, type: propsType, styles: Styles, margin: margin, ...props }) => {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const toggleIcon = () => {
@@ -19,8 +19,8 @@ const Input = ({ icon: Icon, type: propsType, styles: Styles, ...props }) => {
 		type = propsType;
 
 	return (
-		<div className="input relative w-full flex">
-			<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+		<div className={`input relative w-full flex ${margin}`}>
+			<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none scale-110">
 				<Icon className="size-5 text-indigo-900" />
 			</div>
 			<input

@@ -55,8 +55,8 @@ const Login = ({ onLogin }) => {
 				</h2>
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         <form onSubmit={handleLogin}>
-          <Input icon={Mail} type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input icon={Lock} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input icon={Mail} margin={'mb-6'} type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input icon={Lock} margin={'mb-6'} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 					<div className='flex items-center mb-6'>
 						<div onClick={() => handleForgotPassword()} className='text-sm bg-gradient-to-r from-indigo-950 to-indigo-950 text-transparent bg-clip-text hover:underline cursor-pointer'>
 							Forgot password?
