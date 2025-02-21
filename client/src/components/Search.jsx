@@ -4,13 +4,13 @@ import SearchBar from '../assets/SearchBar';
 import SearchResults from '../assets/SearchResults';
 
 
-const Search = ({ className, mode = 'search', addToFormation }) => {
+const Search = ({ className, mode = 'search', addToFormation, addToMalus }) => {
   const [result, setResult] = useState([]);
 
   return (
     <div className={`search ${className}`}>
       <SearchBar setResult={setResult} />
-      <SearchResults results={result} mode={mode} addToFormation={addToFormation}/>
+      <SearchResults results={result} mode={mode} addToFormation={addToFormation} addToMalus={addToMalus}/>
     </div>
   )
 }

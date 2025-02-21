@@ -60,7 +60,7 @@ export const signup = async (req, res) => {
     };
 
     // Save new user to database
-    req.session.user = newUser;
+    await createUser(newUser); // Token is valid, create the user
     // currentUser = newUser;
     await sendVerificationEmail(email, verificationToken);
 
@@ -73,7 +73,7 @@ export const signup = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
     const { email, code } = req.body;
-    let currentUser = req.session.user;
+    let currentUser = await findUser({ email });
 
     try {
         if (!currentUser) { // Check if someone started creating a new user
@@ -88,8 +88,6 @@ export const verifyEmail = async (req, res) => {
         if (currentTime > currentUser.expiresIn) { // Check if the token has expired 
             return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
         }
-        
-        await createUser(currentUser); // Token is valid, create the user
 
         return res.json({ success: true, message: 'Email verified successfully, user created' });
     } catch (err) {
@@ -157,9 +155,7 @@ export const profile = async (req, res) => {
     else
         res.status(404).json({ success: false, message: 'User not found' });
 };
-/** 
- * Updates the user's profile
-*/
+
 export const updateProfile = async (req, res) => {
     const { email, username, password, pfp } = req.body;
 
@@ -372,5 +368,73 @@ export const topProfiles = async (req, res) => {
     } catch (err) {
         console.error('Error getting top profiles', err);
         res.status(500).json({ error: 'Error getting top profiles' });
+    }
+};
+
+export const getMyMalus = async (req, res) => {
+    const { email } = req.query;
+
+    try {
+        const user = await findUser({ email: email });
+
+        if(!user)
+            res.status(404).json({ success: false, message: 'User not found' });
+        else
+            res.status(200).json({ success: true, myMalus: user.myMalus });
+    } catch(err) {
+        console.error('Error getting malus: ', err);
+        res.status(500).json({ error: 'Error getting malus: ', err });
+    }
+};
+
+// Gets malus users gave me
+export const getAssignedMalus = async (req, res) => {
+    const { user } = req.params;
+
+    try {
+        const allUsers = await getUsersFromDB();
+        let count = 0;
+
+        // Iterate all users
+        for(let user of allUsers) {
+            for(let userMalus of user.assignedMalus) { // Iterate all users' assigned malus
+                if (userMalus.email === user.email){ // If matches
+                    count++;
+                }
+            }
+        }
+
+        res.status(200).json({ success: true, assignedMalus: count });
+    } catch (err) {
+        console.error('Error ', err);
+        res.status(500).json({ error: 'Error getting assigned number of malus', err });
+    }
+};
+
+export const updateMyMalus = async (req, res) => {
+    const { email, myMalus } = req.body;
+
+    console.log("Received email:", email);
+    console.log("Received malus:", myMalus);
+
+    try {
+        const user = await findUser({ email: email });
+        console.log("Found user:", user);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (myMalus.length > 3) {
+            return res.status(400).json({ success: false, message: 'Malus cannot exceed 3 items' });
+        }
+
+        user.myMalus = myMalus;
+        await updateUser(user);
+
+        res.status(200).json({ success: true, message: 'User updated', user: user });
+    } catch (err) {
+        console.error('Error updating malus:', err);
+        res.status(500).json({ success: false, message: 'Error updating malus' });
     }
 };

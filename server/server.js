@@ -35,7 +35,6 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-app.use("/models", express.static(path.join(__dirname, "public/models")));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

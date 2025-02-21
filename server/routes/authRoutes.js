@@ -20,7 +20,10 @@ import {
     joinRoom,
     fetchRoomDetails,
     searchSong,
-    topProfiles
+    topProfiles,
+    getMyMalus,
+    getAssignedMalus,
+    updateMyMalus
 } from '../controller/authController.js';
 
 const authRoutes = (io) => {
@@ -47,6 +50,9 @@ const authRoutes = (io) => {
     router.post('/create-room', (req, res) => createRoom(req, res));
     router.post('/join-room', (req, res) => joinRoom(req, res));
     router.post('/:key', (req, res) => fetchRoomDetails(req, res));
+    router.get('/get-my-malus', (req, res) => getMyMalus(req, res));
+    router.get('/get-assigned-malus', (req, res) => getAssignedMalus(req, res));
+    router.post('/update-my-malus', (req, res) => updateMyMalus(req, res));
 
     return router;
 };

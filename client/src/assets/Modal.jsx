@@ -12,7 +12,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
     username: user.username,
     email: user.email,
     password: user.password,
-    pfp: user.pfp,
+    pfp: user.pfp
   });
 
   const handleChange = (e) => {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SearchResults = ({ results, mode, addToFormation }) => {
+const SearchResults = ({ results, mode, addToFormation, addToMalus }) => {
     const navigate = useNavigate();
 
     const showProfile = (value) =>  {
@@ -15,6 +15,9 @@ const SearchResults = ({ results, mode, addToFormation }) => {
         }
         else if (mode === 'formation') {
           addToFormation(value);
+        }
+        else if (mode == 'malus') {
+            addToMalus(value);
         }
     };
 
