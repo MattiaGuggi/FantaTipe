@@ -62,6 +62,8 @@ export const signup = async (req, res) => {
 
     // Save new user to database
     await createUser(newUser); // Token is valid, create the user
+    req.session.pendingUser = newUser;
+    req.session.save();
     await sendVerificationEmail(email, verificationToken);
 
     res.json({
@@ -74,6 +76,7 @@ export const signup = async (req, res) => {
 export const verifyEmail = async (req, res) => {
     const { email, code } = req.body;
     let currentUser = await findUser({ email });
+    console.log(req.session.pendingUser);
 
     try {
         if (!currentUser) { // Check if someone started creating a new user

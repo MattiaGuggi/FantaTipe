@@ -9,6 +9,7 @@ import { initSocket } from './utils/socketUtils.js';
 import authRoutes from './routes/authRoutes.js';
 import { Server } from 'socket.io';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: 'mongodb+srv://mattiahag:Mattiaha2006@fantatipe.9578t.mongodb.net/sessions' }),
     cookie: { secure: process.env.NODE_ENV === 'production' }, // Secure cookie in production
 }));
 app.use(express.json());

@@ -4,6 +4,12 @@ export const initSocket = (io) => {
     const roomReadiness = {}; // Track readiness per room
     let array = {}; // Track songs in every Guess Song room
     let secondArray = {}; // Track chosen image in every room Showdown
+    /* 
+    io.emit() global
+    socket.emit() sender
+    io.to(room).emit() all users in the room + sender
+    socket.to(room).emit() interested users - sender
+    */
 
     io.on('connection', (socket) => {
         console.log(`Client connected: ${socket.id}`);
@@ -14,6 +20,7 @@ export const initSocket = (io) => {
 
         socket.on('userJoined', (data) => {
             console.log(`User joined: ${data.participant}`);
+            socket.join(data.key);
 
             if (!roomReadiness[data.key]) {
                 roomReadiness[data.key] = new Set();
@@ -30,7 +37,7 @@ export const initSocket = (io) => {
                 const room = await Room.findOne({ key });
                 if (room) {
                     console.log(`Room ${key}'s participants members updated.`);
-                    room.participants.remove(data.user);
+                    room.participants = room.participants.filter(p => p !== data.user); // To delete a user
                     await room.save();
                     io.emit('userLoggedOut', { participant: data.user });
                 }
@@ -55,7 +62,6 @@ export const initSocket = (io) => {
             }
         });
 
-        // Need to fix the song problem (always playing in background)
         socket.on('ready', async (data) => {
             const key = data.key;
             const user = data.user;
@@ -63,7 +69,9 @@ export const initSocket = (io) => {
             if (!array[key]) {
                 array[key] = [];
             }
-            array[key].push(data.array[0]);
+            if (data.array && data.array.length > 0) {
+                array[key].push(data.array[0]);
+            }
 
             if (!roomReadiness[key]) {
                 roomReadiness[key] = new Set();
