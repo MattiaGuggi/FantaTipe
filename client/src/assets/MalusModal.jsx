@@ -5,51 +5,42 @@ import { useUser } from './UserContext';
 import Search from '../components/Search';
 import axios from 'axios';
 
-const MalusModal = ({ isOpen, onClose, handleSave, getUserPfp }) => {
-    const { user } = useUser();
+const MalusModal = ({ isOpen, onClose, handleSave, user, getUserPfp }) => {
     const [malusData, setMalusData] = useState([]);
     const [pfps, setPfps] = useState({}); // State to store profile pictures
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
-    
-    const getMalus = async () => {
-        try {
-            const response = await axios.get(`${API_URL}/get-my-malus`, { params: { email: user.email } });
-            const data = response.data;
-            if (data.success) {
-                setMalusData(data.myMalus || []);
-            }
-            else {
-                console.error('Error fetching malus:', data.message);
-            }
-        } catch (error) {
-            console.error('Error fetching malus:', error);
-        }
-    };
-    
-    const fetchPfps = async () => {
-        try {
-          const response = await axios.get(`${API_URL}/get-users`);
-          if (response.status === 200) {
-            const users = response.data.users.reduce((acc, user) => {
-              acc[user.username] = user.pfp;
-              return acc;
-            }, {});
-      
-            setPfps(users);
-          }
-        } catch (err) {
-          console.error('Error fetching all profile pictures:', err);
-        }
-    };
 
     useEffect(() => {
+        const getMalus = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/get-my-malus`, { params: { email: user.email } });
+                const data = response.data;
+                if (data.success) {
+                    setMalusData(data.myMalus || []);
+                }
+                else {
+                    console.error('Error fetching malus:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching malus:', error);
+            }
+        };
         if (isOpen) {
             getMalus();
         }
     }, [isOpen, user.username]);
-
+    
     // Fetch profile pictures for formation members
     useEffect(() => {
+        const fetchPfps = async () => {
+            const updatedPfps = {};
+            for (const member of malusData) {
+                const pfp = await getUserPfp(member);
+                updatedPfps[member] = pfp;
+            }
+            setPfps(updatedPfps); // Set fetched profile pictures
+        };
+
         if (malusData.length > 0) {
             fetchPfps();
         }

@@ -5,6 +5,7 @@ import { getTrendingProfiles } from '../points/trendingProfiles.js';
 import { Room } from '../models/room.model.js';
 import { User } from '../models/user.model.js';
 import axios from 'axios';
+import session from 'express-session'
 
 const MAX = 8;
 
@@ -46,7 +47,7 @@ export const signup = async (req, res) => {
         return res.json({ success: false, message: 'Username already in use' });
     
     const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-    const verificationTokenExpiresIn = new Date(Date.now() + 60 * 60 * 1000); // 1hour time
+    const verificationTokenExpiresIn = new Date(Date.now() + 60 * 60 * 1000); // 1 hour time
 
     const newUser = {
         email,
@@ -61,7 +62,6 @@ export const signup = async (req, res) => {
 
     // Save new user to database
     await createUser(newUser); // Token is valid, create the user
-    // currentUser = newUser;
     await sendVerificationEmail(email, verificationToken);
 
     res.json({
@@ -88,6 +88,8 @@ export const verifyEmail = async (req, res) => {
         if (currentTime > currentUser.expiresIn) { // Check if the token has expired 
             return res.status(400).json({ success: false, message: 'Token expired, user deleted' });
         }
+
+        req.session.pendingUser = null;
 
         return res.json({ success: true, message: 'Email verified successfully, user created' });
     } catch (err) {
@@ -182,6 +184,18 @@ export const updateProfile = async (req, res) => {
         res.status(404).json({ success: false, message: 'User not found' });
 };
 
+export const getFormation = async (req, res) => {
+    const username = req.params.username;
+
+    const user = await findUser({ username: username });
+
+    if (user) {
+        res.json({ formation: user.formation || '' });
+    }
+    else
+        return res.status(404).json({ message: 'User not found' });
+};
+
 export const formation = async (req, res) => {
     const { email } = req.body;
 
@@ -211,18 +225,6 @@ export const updateFormation = async (req, res) => {
     }
     else
         res.json({ success: false, message: 'User not found' });
-};
-
-export const getFormation = async (req, res) => {
-    const username = req.params.username;
-
-    const user = await findUser({ username: username });
-
-    if (user) {
-        res.json({ formation: user.formation || '' });
-    }
-    else
-        return res.status(404).json({ message: 'User not found' });
 };
 
 export const getUsers = async (req, res) => {
@@ -380,46 +382,22 @@ export const getMyMalus = async (req, res) => {
         if(!user)
             res.status(404).json({ success: false, message: 'User not found' });
         else
-            res.status(200).json({ success: true, myMalus: user.myMalus });
+            return res.status(200).json({ success: true, myMalus: user.myMalus });
     } catch(err) {
         console.error('Error getting malus: ', err);
         res.status(500).json({ error: 'Error getting malus: ', err });
     }
 };
 
-// Gets malus users gave me
-export const getAssignedMalus = async (req, res) => {
-    const { user } = req.params;
-
-    try {
-        const allUsers = await getUsersFromDB();
-        let count = 0;
-
-        // Iterate all users
-        for(let user of allUsers) {
-            for(let userMalus of user.assignedMalus) { // Iterate all users' assigned malus
-                if (userMalus.email === user.email){ // If matches
-                    count++;
-                }
-            }
-        }
-
-        res.status(200).json({ success: true, assignedMalus: count });
-    } catch (err) {
-        console.error('Error ', err);
-        res.status(500).json({ error: 'Error getting assigned number of malus', err });
-    }
-};
-
 export const updateMyMalus = async (req, res) => {
     const { email, myMalus } = req.body;
 
-    console.log("Received email:", email);
-    console.log("Received malus:", myMalus);
+    if (!email || !myMalus || myMalus.length == 0) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
 
     try {
         const user = await findUser({ email: email });
-        console.log("Found user:", user);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -432,9 +410,36 @@ export const updateMyMalus = async (req, res) => {
         user.myMalus = myMalus;
         await updateUser(user);
 
-        res.status(200).json({ success: true, message: 'User updated', user: user });
+        return res.status(200).json({ success: true, message: 'User malus updated successfully', user: user });
     } catch (err) {
         console.error('Error updating malus:', err);
-        res.status(500).json({ success: false, message: 'Error updating malus' });
+        return res.status(500).json({ success: false, message: 'Error updating malus', error: err.message });
+    }
+};
+
+// Gets malus users gave me
+export const getAssignedMalus = async (req, res) => {
+    const { email } = req.query;
+
+    try {
+        const allUsers = await getUsersFromDB();
+        const user = await findUser({ email: email });
+        let count = 0;
+
+        // Iterate all users
+        for(let u of allUsers) {
+            // Iterate all users' assigned malus
+            for(let userMalus of u.myMalus) { // userMalus é username e non di tipo User
+                if (userMalus == user.username){ // If matches
+                    count++;
+                }
+            }
+        }
+        console.log(count)
+
+        res.status(200).json({ success: true, assignedMalus: count });
+    } catch (err) {
+        console.error('Error ', err);
+        res.status(500).json({ error: 'Error getting assigned number of malus', err });
     }
 };

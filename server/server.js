@@ -20,27 +20,24 @@ const server = http.createServer(app);
 const corsOptions = {
     origin: CLIENT_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 const io = new Server(server, {
-    cors: {
-        origin: CLIENT_URL,
-        methods: ["GET", "POST"],
-    },
+    cors: corsOptions
 });
 
 // Middleware
-app.use(express.json());
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: process.env.NODE_ENV === 'production' }, // Secure cookie in production
 }));
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
 // Routes
 app.use('/', authRoutes(io));

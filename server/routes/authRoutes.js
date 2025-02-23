@@ -1,30 +1,9 @@
 import express from 'express';
 import { 
-    forgotPassword, 
-    formation, 
-    getFormation, 
-    getResetPassword, 
-    getUsers, 
-    leaderboard, 
-    login, 
-    postResetPassword, 
-    profile, 
-    search, 
-    signup, 
-    updateFormation, 
-    updatePoints, 
-    updateProfile, 
-    verifyEmail,
-    getGames,
-    createRoom,
-    joinRoom,
-    fetchRoomDetails,
-    searchSong,
-    topProfiles,
-    getMyMalus,
-    getAssignedMalus,
-    updateMyMalus
+    forgotPassword, formation, getFormation, getResetPassword, getUsers, leaderboard, login, postResetPassword, profile, search, signup, updateFormation,
+    updatePoints, updateProfile, verifyEmail, getGames, createRoom, joinRoom, fetchRoomDetails, searchSong, topProfiles, getMyMalus, getAssignedMalus, updateMyMalus
 } from '../controller/authController.js';
+import session from 'express-session';
 
 const authRoutes = (io) => {
     const router = express.Router();
@@ -38,6 +17,10 @@ const authRoutes = (io) => {
     router.post('/formation', (req, res) => formation(req, res));
     router.post('/update-formation', (req, res) => updateFormation(req, res));
     router.post('/update-points', (req, res) => updatePoints(req, res, io));
+    router.post('/create-room', (req, res) => createRoom(req, res));
+    router.post('/join-room', (req, res) => joinRoom(req, res));
+    router.post('/update-my-malus', (req, res) => updateMyMalus(req, res));
+    router.post('/:key', (req, res) => fetchRoomDetails(req, res));
     router.get('/auth/reset-password/:token', (req, res) => getResetPassword(req, res));
     router.get('/search', (req, res) => search(req, res));
     router.get('/profile/:username', (req, res) => profile(req, res));
@@ -47,12 +30,8 @@ const authRoutes = (io) => {
     router.get('/games', (req, res) => getGames(req, res));
     router.get('/search-song', (req, res) => searchSong(req, res));
     router.get('/top-profiles', (req, res) => topProfiles(req, res));
-    router.post('/create-room', (req, res) => createRoom(req, res));
-    router.post('/join-room', (req, res) => joinRoom(req, res));
-    router.post('/:key', (req, res) => fetchRoomDetails(req, res));
     router.get('/get-my-malus', (req, res) => getMyMalus(req, res));
     router.get('/get-assigned-malus', (req, res) => getAssignedMalus(req, res));
-    router.post('/update-my-malus', (req, res) => updateMyMalus(req, res));
 
     return router;
 };

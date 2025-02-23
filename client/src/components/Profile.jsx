@@ -12,7 +12,9 @@ const Profile = ({ redirectToLogin }) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isMalusModalOpen, setIsMalusModalOpen] = useState(false);
   const [myMalus, setMyMalus] = useState([]);
+  const [pfps, setPfps] = useState({});
   const navigate = useNavigate();
+  const [zoomedImg, setZoomedImg] = useState(null);
   const API_URL = import.meta.env.MODE === 'development' ? 'http://localhost:8080' : '';
 
   useEffect(() => {
@@ -34,6 +36,7 @@ const Profile = ({ redirectToLogin }) => {
   }, [user]);
 
   const getUserPfp = async (username) => {
+    if (pfps[username]) return pfps[username]; // Return cached PFP if already fetched
     if (username === user.username) return user.pfp;
   
     try {
@@ -46,7 +49,7 @@ const Profile = ({ redirectToLogin }) => {
       console.error('Error fetching user pfp:', err);
     }
     return '';
-  };
+  };  
   
   useEffect(() => {
     const fetchPfps = async () => {
@@ -82,21 +85,19 @@ const Profile = ({ redirectToLogin }) => {
     const updatedMalus = newMalus.myMalus;
 
     try {
-      const params = {
-        email: user?.email,
-        myMalus: updatedMalus
-      };
-      const response = await fetch(`${API_URL}/update-my-malus`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
+        const response = await axios.post(`${API_URL}/update-my-malus`, { email: user.email, myMalus: updatedMalus });
 
-      const data = await response.json();
-      if (data.success) setUser(data.user);
-      setIsMalusModalOpen(false);
+        const data = await response.data;
+        console.log(data);
+        
+        if (data.success) {
+            setMyMalus(updatedMalus);
+        } else {
+            console.error('Failed to save new malus: ', data.message);
+        }
+        setIsMalusModalOpen(false); // Close the modal
     } catch (err) {
-      console.error('Error saving malus:', err);
+        console.error('Error saving malus:', err);
     }
   };
 
@@ -105,27 +106,46 @@ const Profile = ({ redirectToLogin }) => {
     navigate('/login');
   };
 
+  const zoom = (username) => {
+    setZoomedImg(username);
+  };
+
+  const handleOutsideClick = (e) => {
+    if (zoomedImg) {
+      setZoomedImg(null);
+    }
+  };
+
   return (
     <>
       <LogOut className='absolute text-white top-28 right-60 cursor-pointer translate-x-3/4 xs:right-12 transition-all duration-200 hover:scale-125' onClick={redirect} />
-      <div className='absolute font-extrabold text-4xl flex flex-col items-center justify-center top-16 w-80 h-3/5 mt-12'>
+      <div className={`absolute font-extrabold text-4xl flex flex-col items-center justify-center top-16 w-80 h-3/5 mt-12 ${zoomedImg ? 'overflow-hidden' : ''}`}
+        onClick={handleOutsideClick}>
+        {zoomedImg && (
+          <div className='zoomed-image flex flex-col justify-center items-center fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md z-50'>
+            <h2 className='text-7xl text-white font-semibold mb-10'>{zoomedImg}</h2>
+            <img className='rounded-full w-52 h-52' src={pfps[zoomedImg]}/>
+          </div>
+        )}
         <p className='text-white'>{user.username}</p>
         <p className='text-white mt-6 mb-12'>{user.points} points</p>
-        <img src={user.pfp} alt="Profile Picture" className='rounded-full w-52 h-52 xs:w-40 xs:h-40' />
+        <img src={user.pfp} alt="Profile Picture" className='rounded-full w-48 h-48 xs:w-40 xs:h-40' />
 
         <div className='mt-10'>
           <CustomButton onClick={() => setIsProfileModalOpen(true)} value={'Modify Profile'} />
         </div>
 
-        <div>
+        <div className=''>
           <p className='text-white'>Your Malus:</p>
-          {myMalus === null ? (
-            <Loader className='size-6 animate-spin mx-auto' />
-          ) : myMalus.length === 0 ? (
-            <p className='text-white font-semibold text-xl'>No Malus assigned yet</p>
-          ) : (
-            myMalus.map((malus, index) => <img key={index} src={malus.pfp} className='rounded-full' />)
-          )}
+          <div className='flex gap-5 m-5'>
+            {myMalus === null ? (
+              <Loader className='size-6 animate-spin mx-auto' />
+            ) : myMalus.length === 0 ? (
+              <p className='text-white font-semibold text-xl'>No Malus assigned yet</p>
+            ) : (
+              myMalus.map((username, index) => <img key={index} src={pfps[username]} className='rounded-full w-24 h-24 cursor-pointer' onClick={() => zoom(username)} />)
+            )}
+          </div>
           <CustomButton onClick={() => setIsMalusModalOpen(true)} value={'Change Malus'} />
         </div>
 
