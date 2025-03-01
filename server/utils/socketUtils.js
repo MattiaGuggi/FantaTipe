@@ -85,7 +85,7 @@ export const initSocket = (io) => {
 
                     // The stored players must be the same as the participants + the creator
                     if (roomReadiness[key].size === totalParticipants + 1) {
-                        io.emit('allReady', { key: key, array: array[key] });
+                        io.to(key).emit('allReady', { key: key, array: array[key] });
                     }
                 }
             } catch (err) {

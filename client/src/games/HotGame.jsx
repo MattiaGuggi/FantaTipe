@@ -9,6 +9,7 @@ import { ArrowUp10 } from 'lucide-react';
 
 const hotGame = () => {
   const { user } = useUser();
+    const { key } = useParams();
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [endGame, setEndGame] = useState(false);
   const [inputRounds, setInputRounds] = useState(64);

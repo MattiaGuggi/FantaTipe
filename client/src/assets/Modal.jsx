@@ -94,7 +94,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
             onClick={onClose}
             className="bg-gradient-to-r from-indigo-700 to-indigo-900 text-transparent bg-clip-text px-4 py-2 rounded-xl shadow-custom text-lg font-medium w-36
             hover:bg-gray-500 hover:text-transparent hover:bg-clip-text hover:from-indigo-800 hover:to-indigo-950
-            xs:w-28 xs:font-normal xs:ml-0"
+            xs:w-36 xs:font-normal xs:m-0 xs:px-2 xs:py-0"
           >
             Cancel
           </button>
@@ -102,7 +102,7 @@ const Modal = ({ isOpen, onClose, user, handleSave }) => {
             onClick={() => handleSave(formData)}
             className='bg-gradient-to-r from-indigo-700 to-indigo-900 text-white px-4 py-2 rounded-xl text-lg font-medium w-36
             hover:from-indigo-800 hover:to-indigo-950 shadow-custom
-            xs:w-28 xs:font-normal xs:mr-0'
+            xs:w-36 xs:font-normal xs:m-0 xs:px-2 xs:py-0'
           >
             Save
           </button>

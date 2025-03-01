@@ -125,19 +125,14 @@ const CreateRoom = () => {
                     key={index}
                     onClick={() => setGame(game)}
                     value={game}
-                    margin={'m-6'}
+                    margin={'m-6 xs:m-0'}
                   />
                 ))
             ) : (
                 <div className="text-red-600 font-bold">No games found</div>
             )}
         </div>
-        <div className='flex justify-center items-center w-full'>
-          <div className='w-1/3 flex items-center justify-center py-3 px-10 text-white text-lg font-bold'
-          >
-            Game selected: {game}
-          </div>
-        </div>
+        <div className='w-1/3 flex items-center justify-center mb-6 text-white text-lg font-bold xs:w-1/2 xs:mb-3 xs:mt-3'>Game selected: {game}</div>
         <CustomButton onClick={createRoom} value={'Create Room'}
         />
     </div>

@@ -68,11 +68,11 @@ function App() {
                 <Route path="/games" element={<Games isGameStarted={isGameStarted} setIsGameStarted={setIsGameStarted}/>} />
                 <Route path="/profile" element={<Profile redirectToLogin={redirectToLogin}/>} />
                 <Route path="/profile/:username" element={<Users />} />
-                <Route path="/treasure-hunt" element={<TreasureHunt />} />
-                <Route path="/guess-song" element={<GuessSong />} />
-                <Route path="/showdown" element={<Showdown />} />
-                <Route path="/guess-who" element={<GuessWho />} />
-                <Route path="/hot-game" element={<HotGame />} />
+                <Route path="/treasure-hunt/:key" element={<TreasureHunt />} />
+                <Route path="/guess-song/:key" element={<GuessSong />} />
+                <Route path="/showdown/:key" element={<Showdown />} />
+                <Route path="/guess-who/:key" element={<GuessWho />} />
+                <Route path="/hot-game/:key" element={<HotGame />} />
                 <Route path="/create-room" element={<CreateRoom />} />
                 <Route path="/join-room" element={<JoinRoom setRoom={setRoom} />} />
                 <Route path="/:key" element={<Room roomId={room} setIsGameStarted={setIsGameStarted}/>} />

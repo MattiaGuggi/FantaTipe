@@ -1,14 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { Loader } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { useUser } from "../assets/UserContext";
 import axios from 'axios';
 import { io } from "socket.io-client";
+import { useParams } from "react-router-dom";
 
 const Showdown = () => {
   const { user } = useUser();
+  const { key } = useParams();
   const [round, setRound] = useState(1);
   const [inputRounds, setInputRounds] = useState(64);
   const [images, setImages] = useState([]);
+  const [roomDetails, setRoomDetails] = useState({ participants: [] });
   const [winningImage, setWinningImage] = useState(0);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [endGame, setEndGame] = useState(false);
@@ -17,6 +21,24 @@ const Showdown = () => {
   const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
   const socket = io(API_URL);
   let array = [];
+
+  const getRoomDetails = async () => {
+      try {
+          if (!key) return;
+          console.log('Room key: ', key);
+          const response = await axios.post(`${API_URL}/${key}`);
+          const data = response.data;
+
+          if (data.success) {
+              setRoomDetails(data.room);
+          }
+          else {
+              console.error('Error getting room name: ', data.error);
+          }
+      } catch (err) {
+          console.error('Error fetching room details:', err);
+      }
+  };
 
   const startGame = async () => {
     setIsGameStarted(true);
@@ -82,24 +104,38 @@ const Showdown = () => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    getRoomDetails();
+  }, [key]);
+
   if (!isGameStarted) {
-    return (
-      <>
-        <input
-          className='w-1/4 pl-4 m-12 pr-10 py-2 bg-opacity-50 text-black rounded-lg border'
-          type='number'
-          placeholder='Inserisci numero di round'
-          value={inputRounds}
-          onChange={(e) => setInputRounds(e.target.value)}
-        />
-        <button
-          className='text-md mt-2 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 transition-all duration-200 hover:scale-110'
-          onClick={startGame}
-        >
-          Start Game
-        </button>
-      </>
-    );
+    if (roomDetails.creator == user.username) {
+      return (
+        <>
+          <input
+            className='w-1/4 pl-4 m-12 pr-10 py-2 bg-opacity-50 text-black rounded-lg border'
+            type='number'
+            placeholder='Inserisci numero di round'
+            value={inputRounds}
+            onChange={(e) => setInputRounds(e.target.value)}
+          />
+          <button
+            className='text-md mt-2 p-4 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white font-bold rounded-lg shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 transition-all duration-200 hover:scale-110'
+            onClick={startGame}
+          >
+            Start Game
+          </button>
+        </>
+      );
+    }
+    else {
+      return (
+        <>
+          <h2 className="text-white font-bold text-3xl">Waiting for the host to start the game...</h2>
+          <Loader className='mt-7 size-6 animate-spin mx-auto text-white' />
+        </>
+      );
+    }
   }
   else {
     return (

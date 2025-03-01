@@ -12,6 +12,7 @@ const Games = ({ isGameStarted, setIsGameStarted }) => {
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
     const storedRoomKey = localStorage.getItem("roomKey");
     const storedParticipant = localStorage.getItem("participant");
+    const [isTouch, setIsTouch] = useState(false);
 
     const getRoomDetails = async (key) => {
         try {
@@ -104,6 +105,13 @@ const Games = ({ isGameStarted, setIsGameStarted }) => {
                 setIsGameStarted(true);
             }
     }, []);
+    
+    useEffect(() => {
+      const handleTouch = () => setIsTouch(true);
+      window.addEventListener("touchstart", handleTouch);
+      
+      return () => window.removeEventListener("touchstart", handleTouch);
+    }, []);
 
   // isGameStarted is automatically true only if he has the key in the session
 
@@ -114,18 +122,20 @@ const Games = ({ isGameStarted, setIsGameStarted }) => {
   return (
     <>
         <div className='flex'>
-        <div className='flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
-            font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-            focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
-            onClick={() => room("create")}>
-            Create Room
-        </div>
-        <div className='flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
-            font-bold rounded-2xl shadow-lg hover:from-indigo-800 hover:to-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
-            focus:ring-offset-gray-900 transition-all duration-200 hover:scale-110'
-            onClick={() => room("join")}>
-            Join Room
-        </div>
+            <div className={`flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
+                font-bold rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
+                focus:ring-offset-gray-900 transition-all duration-200
+                ${!isTouch ? 'hover:from-indigo-800 hover:to-indigo-950 hover:scale-110' : ''}`}
+                onClick={() => room("create")}>
+                Create Room
+            </div>
+            <div className={`flex items-center justify-center cursor-pointer py-5 px-8 bg-gradient-to-r from-indigo-700 to-indigo-950 text-white m-4
+                font-bold rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-2
+                focus:ring-offset-gray-900 transition-all duration-200
+                ${!isTouch ? 'hover:from-indigo-800 hover:to-indigo-950 hover:scale-110' : ''}`}
+                onClick={() => room("join")}>
+                Join Room
+            </div>
         </div>
     </>
   )

@@ -8,6 +8,7 @@ import { AudioLines, Search } from 'lucide-react'
 
 const GuessSong = () => {
   const { user } = useUser();
+  const { key } = useParams();
   const [query, setQuery] = useState('');
   const [selectedSong, setSelectedSong] = useState('');
   const [guessedSong, setGuessedSong] = useState('');
@@ -37,7 +38,7 @@ const GuessSong = () => {
   };
 
   const reproduceSong = async (songName, songArtist, previewUrl) => {
-    setSelectedSong(`${songName}-${songArtist}`);
+    setSelectedSong(`${songName.replace(/\s*\([^)]*\)/g, "")}`);
     try {
       if (currentAudio?.audio) {
         currentAudio.audio.pause();
@@ -198,25 +199,31 @@ const GuessSong = () => {
   }
   else {
     return (
-      <>
-        <h2 className='text-white font-bold text-5xl'>Guess the song!</h2>
-        <h3 className='text-white text-2xl mb-2'>
-          {endGame ? 'Game Finished!' : `Time left: ${timer}s`}
-        </h3>
-        <Input
-          icon={AudioLines}
-          type="text"
-          value={guessedSong}
-          placeholder="Guess the song!"
-          onChange={(e) => setGuessedSong(e.target.value)}
-        />
-        {isRevealed && (
-          <div className='text-white mt-4'>
-            {array[round]?.song.toLowerCase() === guessedSong.toLowerCase() ? 'Correct!' : 'Wrong!'}
-            <p>Correct Answer: {array[round]?.song}</p>
-          </div>
+      <div className='w-1/4'>
+        {endGame ? (
+          <>
+            <h3 className='text-white text-2xl mb-2'>Game Finished</h3>
+          </>
+        ) : (
+          <>
+            <h2 className='text-white font-bold text-5xl'>Guess the song!</h2>
+            <h3 className='text-white text-2xl mb-2'>{`Time left: ${timer}s`}</h3>
+            <Input
+              icon={AudioLines}
+              type="text"
+              value={guessedSong}
+              placeholder="Guess the song!"
+              onChange={(e) => setGuessedSong(e.target.value)}
+            />
+            {isRevealed && (
+              <div className='text-white mt-4'>
+                {array[round]?.song.toLowerCase() === guessedSong.toLowerCase() ? 'Correct!' : 'Wrong!'}
+                <p>Correct Answer: {array[round]?.song}</p>
+              </div>
+            )}
+          </>
         )}
-      </>
+      </div>
     );
   }
 };

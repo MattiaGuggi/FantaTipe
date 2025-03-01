@@ -143,7 +143,7 @@ const Profile = ({ redirectToLogin }) => {
             ) : myMalus.length === 0 ? (
               <p className='text-white font-semibold text-xl'>No Malus assigned yet</p>
             ) : (
-              myMalus.map((username, index) => <img key={index} src={pfps[username]} className='rounded-full w-24 h-24 cursor-pointer' onClick={() => zoom(username)} />)
+              myMalus.map((username, index) => <img key={index} src={pfps[username]} className='rounded-full w-24 h-24 cursor-pointer xs:w-20 xs:h-20' onClick={() => zoom(username)} />)
             )}
           </div>
           <CustomButton onClick={() => setIsMalusModalOpen(true)} value={'Change Malus'} />

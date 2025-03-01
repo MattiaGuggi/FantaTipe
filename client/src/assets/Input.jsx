@@ -28,7 +28,7 @@ const Input = ({ icon: Icon, type: propsType, styles: Styles, margin: margin, ..
 				type={type}
 				required
 				className={`${Styles} w-full h-full pl-12 pr-12 py-4 bg-opacity-50 rounded-lg border border-gray-700 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-700
-				placeholder-gray-400 transition duration-200`}
+				placeholder-gray-400 transition duration-200 xs:py-3`}
 			/>
 			{isLockIcon && (
 				<div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">

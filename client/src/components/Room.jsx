@@ -113,7 +113,7 @@ const Room = ({ setIsGameStarted }) => {
         socket.on('startGame', () => {
             alert('Game started');
             setIsGameStarted(true);
-            navigate(`/${roomDetails.game.toLowerCase().replace(' ', '-')}`);
+            navigate(`/${roomDetails.game.toLowerCase().replace(' ', '-')}/${key}`);
         });
 
         socket.on('userJoined', (data) => {
