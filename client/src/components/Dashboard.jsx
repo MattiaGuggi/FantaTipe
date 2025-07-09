@@ -8,7 +8,6 @@ const Dashboard = () => {
     const [users, setUsers] = useState([]);
     const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8080" : "";
     const navigate = useNavigate();
-    const prova = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
     useEffect(() => {
         const fetchData = async () => {

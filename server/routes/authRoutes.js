@@ -3,7 +3,6 @@ import {
     forgotPassword, formation, getFormation, getResetPassword, getUsers, leaderboard, login, postResetPassword, profile, search, signup, updateFormation,
     updatePoints, updateProfile, verifyEmail, getGames, createRoom, joinRoom, fetchRoomDetails, searchSong, topProfiles, getMyMalus, getAssignedMalus, updateMyMalus
 } from '../controller/authController.js';
-import session from 'express-session';
 
 const authRoutes = (io) => {
     const router = express.Router();

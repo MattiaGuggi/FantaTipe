@@ -5,7 +5,6 @@ import { getTrendingProfiles } from '../points/trendingProfiles.js';
 import { Room } from '../models/room.model.js';
 import { User } from '../models/user.model.js';
 import axios from 'axios';
-import session from 'express-session'
 
 const MAX = 8;
 
